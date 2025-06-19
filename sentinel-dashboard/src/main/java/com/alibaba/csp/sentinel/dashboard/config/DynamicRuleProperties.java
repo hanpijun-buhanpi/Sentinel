@@ -14,7 +14,7 @@ import java.util.Properties;
  * @author lyc
  * @since 1.8-SNAPSHOT
  */
-@EnableConfigurationProperties({DynamicRuleProperties.Nacos.class})
+@EnableConfigurationProperties({DynamicRuleProperties.Nacos.class, DynamicRuleProperties.Apollo.class})
 @ConfigurationProperties(prefix = DynamicRuleConfig.DYNAMIC_RULE_PREFIX)
 public class DynamicRuleProperties {
     /**
@@ -30,6 +30,10 @@ public class DynamicRuleProperties {
          * Nacos
          */
         NACOS,
+        /**
+         * Apollo
+         */
+        APOLLO,
     }
 
     public Type getType() {
@@ -104,6 +108,117 @@ public class DynamicRuleProperties {
             properties.put("password", password);
             properties.put("namespace", namespace);
             return properties;
+        }
+    }
+
+    /**
+     * Apollo配置属性
+     *
+     * @author lyc
+     * @since 1.8-SNAPSHOT
+     */
+    @ConfigurationProperties(prefix = DynamicRuleConfig.APOLLO_DYNAMIC_RULE_PREFIX)
+    public static class Apollo {
+        /**
+         * 登记在Apollo的应用ID
+         */
+        public static final String APP_ID = "sentinel";
+
+        /**
+         * Portal地址
+         */
+        private String portalUrl = "http://localhost:8070";
+        /**
+         * 访问密钥
+         */
+        private String token = null;
+        /**
+         * 连接超时时间（毫秒）
+         */
+        private int connectTimeout = 1000;
+        /**
+         * 读取超时时间（毫秒）
+         */
+        private int readTimeout = 5000;
+        /**
+         * 环境
+         */
+        private String env = "DEV";
+        /**
+         * 集群
+         */
+        private String cluster = "default";
+        /**
+         * 命名空间
+         */
+        private String namespace = "application";
+        /**
+         * 操作者
+         */
+        private String operator = "apollo";
+
+        public String getPortalUrl() {
+            return portalUrl;
+        }
+
+        public void setPortalUrl(String portalUrl) {
+            this.portalUrl = portalUrl;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        public int getConnectTimeout() {
+            return connectTimeout;
+        }
+
+        public void setConnectTimeout(int connectTimeout) {
+            this.connectTimeout = connectTimeout;
+        }
+
+        public int getReadTimeout() {
+            return readTimeout;
+        }
+
+        public void setReadTimeout(int readTimeout) {
+            this.readTimeout = readTimeout;
+        }
+
+        public String getEnv() {
+            return env;
+        }
+
+        public void setEnv(String env) {
+            this.env = env;
+        }
+
+        public String getCluster() {
+            return cluster;
+        }
+
+        public void setCluster(String cluster) {
+            this.cluster = cluster;
+        }
+
+        public String getNamespace() {
+            return namespace;
+        }
+
+        public void setNamespace(String namespace) {
+            this.namespace = namespace;
+        }
+
+        public String getOperator() {
+            return operator;
+        }
+
+        public void setOperator(String operator) {
+            this.operator = operator;
         }
     }
 }

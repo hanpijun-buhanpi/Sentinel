@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Additional Copyright 2025 Laiyancheng 1548749669@qq.com All Rights Reserved.
+ */
 package com.alibaba.csp.sentinel.dashboard.rule.apollo;
 
 /**
@@ -27,6 +30,6 @@ public final class ApolloConfigUtil {
     }
 
     public static String getFlowDataId(String appName) {
-        return String.format("%s%s", appName, FLOW_DATA_ID_POSTFIX);
+        return appName + FLOW_DATA_ID_POSTFIX;
     }
 }

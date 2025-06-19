@@ -5,12 +5,15 @@ package com.alibaba.csp.sentinel.dashboard.config;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.rule.*;
+import com.alibaba.csp.sentinel.dashboard.rule.apollo.FlowRuleApolloProvider;
+import com.alibaba.csp.sentinel.dashboard.rule.apollo.FlowRuleApolloPublisher;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.FlowRuleNacosProvider;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.FlowRuleNacosPublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.nacos.api.config.ConfigFactory;
 import com.alibaba.nacos.api.config.ConfigService;
+import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,6 +36,7 @@ public class DynamicRuleConfig {
     /* 配置前缀 */
     public static final String DYNAMIC_RULE_PREFIX = "rules.dynamic";
     public static final String NACOS_DYNAMIC_RULE_PREFIX = DYNAMIC_RULE_PREFIX + ".nacos";
+    public static final String APOLLO_DYNAMIC_RULE_PREFIX = DYNAMIC_RULE_PREFIX + ".apollo";
     /* Bean名称 */
     public static final String FLOW_RULE_ENTITY_ENCODER = "flowRuleEntityEncoder";
     public static final String FLOW_RULE_ENTITY_DECODER = "flowRuleEntityDecoder";
@@ -76,6 +80,41 @@ public class DynamicRuleConfig {
         @Bean(name = FLOW_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<FlowRuleEntity>> flowDynamicRulePublisher() {
             return new FlowRuleNacosPublisher();
+        }
+    }
+
+    /**
+     * Apollo 动态规则配置
+     *
+     * @author lyc
+     * @since 1.8-SNAPSHOT
+     */
+    @ConditionalOnProperty(prefix = DYNAMIC_RULE_PREFIX, name = "type", havingValue = "apollo")
+    @ConditionalOnClass(ApolloOpenApiClient.class)
+    @ConditionalOnMissingBean(DynamicRuleProvider.class)
+    @Configuration
+    public static class ApolloDynamicRuleConfig {
+        @Autowired
+        private DynamicRuleProperties.Apollo properties;
+
+        @Bean
+        public ApolloOpenApiClient apolloOpenApiClient() throws Exception {
+            return ApolloOpenApiClient.newBuilder()
+                    .withPortalUrl(properties.getPortalUrl())
+                    .withToken(properties.getToken())
+                    .withConnectTimeout(properties.getConnectTimeout())
+                    .withReadTimeout(properties.getReadTimeout())
+                    .build();
+        }
+
+        @Bean(name = FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<FlowRuleEntity>> flowDynamicRuleProvider() {
+            return new FlowRuleApolloProvider();
+        }
+
+        @Bean(name = FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<FlowRuleEntity>> flowDynamicRulePublisher() {
+            return new FlowRuleApolloPublisher();
         }
     }
 
