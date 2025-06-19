@@ -28,13 +28,11 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Eric Zhao
  * @since 1.4.0
  */
-@Component("flowRuleDefaultPublisher")
 public class FlowRuleApiPublisher implements DynamicRulePublisher<List<FlowRuleEntity>> {
 
     @Autowired
