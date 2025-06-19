@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Additional Copyright 2025 Laiyancheng 1548749669@qq.com All Rights Reserved.
+ */
 package com.alibaba.csp.sentinel.dashboard.rule.nacos;
 
 import java.util.List;
@@ -39,12 +42,12 @@ public class FlowRuleNacosPublisher implements DynamicRulePublisher<List<FlowRul
     private Converter<List<FlowRuleEntity>, String> converter;
 
     @Override
-    public void publish(String app, List<FlowRuleEntity> rules) throws Exception {
-        AssertUtil.notEmpty(app, "app name cannot be empty");
+    public void publish(String appName, List<FlowRuleEntity> rules) throws Exception {
+        AssertUtil.notEmpty(appName, "app name cannot be empty");
         if (rules == null) {
             return;
         }
-        configService.publishConfig(app + NacosConfigUtil.FLOW_DATA_ID_POSTFIX,
+        configService.publishConfig(appName + NacosConfigUtil.FLOW_DATA_ID_POSTFIX,
             NacosConfigUtil.GROUP_ID, converter.convert(rules));
     }
 }

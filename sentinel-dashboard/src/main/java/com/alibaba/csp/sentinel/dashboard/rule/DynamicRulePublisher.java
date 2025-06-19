@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Additional Copyright 2025 Laiyancheng 1548749669@qq.com All Rights Reserved.
+ */
 package com.alibaba.csp.sentinel.dashboard.rule;
 
 /**
@@ -24,9 +27,9 @@ public interface DynamicRulePublisher<T> {
     /**
      * Publish rules to remote rule configuration center for given application name.
      *
-     * @param app app name
+     * @param appName app name
      * @param rules list of rules to push
      * @throws Exception if some error occurs
      */
-    void publish(String app, T rules) throws Exception;
+    void publish(String appName, T rules) throws Exception;
 }

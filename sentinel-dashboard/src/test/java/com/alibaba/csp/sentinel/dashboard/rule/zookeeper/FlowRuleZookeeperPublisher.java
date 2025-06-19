@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Additional Copyright 2025 Laiyancheng 1548749669@qq.com All Rights Reserved.
+ */
 package com.alibaba.csp.sentinel.dashboard.rule.zookeeper;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
@@ -36,10 +39,10 @@ public class FlowRuleZookeeperPublisher implements DynamicRulePublisher<List<Flo
     private Converter<List<FlowRuleEntity>, String> converter;
 
     @Override
-    public void publish(String app, List<FlowRuleEntity> rules) throws Exception {
-        AssertUtil.notEmpty(app, "app name cannot be empty");
+    public void publish(String appName, List<FlowRuleEntity> rules) throws Exception {
+        AssertUtil.notEmpty(appName, "app name cannot be empty");
 
-        String path = ZookeeperConfigUtil.getPath(app);
+        String path = ZookeeperConfigUtil.getPath(appName);
         Stat stat = zkClient.checkExists().forPath(path);
         if (stat == null) {
             zkClient.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT).forPath(path, null);

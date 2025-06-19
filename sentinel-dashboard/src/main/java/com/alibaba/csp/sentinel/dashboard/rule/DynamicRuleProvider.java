@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Additional Copyright 2025 Laiyancheng 1548749669@qq.com All Rights Reserved.
+ */
 package com.alibaba.csp.sentinel.dashboard.rule;
 
 /**
@@ -21,5 +24,11 @@ package com.alibaba.csp.sentinel.dashboard.rule;
  */
 public interface DynamicRuleProvider<T> {
 
+    /**
+     * Get rules from remote rule configuration center for given application name.
+     *
+     * @param appName app name
+     * @throws Exception if some error occurs
+     */
     T getRules(String appName) throws Exception;
 }

@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Additional Copyright 2025 Laiyancheng 1548749669@qq.com All Rights Reserved.
+ */
 package com.alibaba.csp.sentinel.dashboard.rule;
 
 import java.util.List;
@@ -40,21 +43,21 @@ public class FlowRuleApiPublisher implements DynamicRulePublisher<List<FlowRuleE
     private AppManagement appManagement;
 
     @Override
-    public void publish(String app, List<FlowRuleEntity> rules) throws Exception {
-        if (StringUtil.isBlank(app)) {
+    public void publish(String appName, List<FlowRuleEntity> rules) throws Exception {
+        if (StringUtil.isBlank(appName)) {
             return;
         }
         if (rules == null) {
             return;
         }
-        Set<MachineInfo> set = appManagement.getDetailApp(app).getMachines();
+        Set<MachineInfo> set = appManagement.getDetailApp(appName).getMachines();
 
         for (MachineInfo machine : set) {
             if (!machine.isHealthy()) {
                 continue;
             }
             // TODO: parse the results
-            sentinelApiClient.setFlowRuleOfMachine(app, machine.getIp(), machine.getPort(), rules);
+            sentinelApiClient.setFlowRuleOfMachine(appName, machine.getIp(), machine.getPort(), rules);
         }
     }
 }
