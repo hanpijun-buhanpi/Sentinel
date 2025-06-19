@@ -18,6 +18,8 @@
  */
 package com.alibaba.csp.sentinel.dashboard.rule.nacos;
 
+import static com.alibaba.csp.sentinel.dashboard.rule.nacos.NacosConfigUtil.*;
+
 import java.util.List;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
@@ -47,7 +49,6 @@ public class FlowRuleNacosPublisher implements DynamicRulePublisher<List<FlowRul
         if (rules == null) {
             return;
         }
-        configService.publishConfig(appName + NacosConfigUtil.FLOW_DATA_ID_POSTFIX,
-            NacosConfigUtil.GROUP_ID, converter.convert(rules));
+        configService.publishConfig(NacosConfigUtil.getFlowDataId(appName), GROUP_ID, converter.convert(rules));
     }
 }

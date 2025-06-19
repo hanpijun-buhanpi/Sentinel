@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Additional Copyright 2025 Laiyancheng 1548749669@qq.com All Rights Reserved.
+ */
 package com.alibaba.csp.sentinel.dashboard.rule.nacos;
 
 /**
@@ -39,4 +42,8 @@ public final class NacosConfigUtil {
     public static final String SERVER_NAMESPACE_SET_DATA_ID_POSTFIX = "-cs-namespace-set";
 
     private NacosConfigUtil() {}
+
+    public static String getFlowDataId(String appName) {
+        return appName + FLOW_DATA_ID_POSTFIX;
+    }
 }
