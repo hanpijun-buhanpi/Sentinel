@@ -126,7 +126,7 @@ angular
         }
       })
 
-      .state('dashboard.flow', {
+      .state('dashboard.flowV2', {
           templateUrl: 'app/views/flow_v2.html',
           url: '/v2/flow/:app',
           controller: 'FlowControllerV2',

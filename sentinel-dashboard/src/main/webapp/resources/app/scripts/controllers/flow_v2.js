@@ -59,6 +59,13 @@ app.controller('FlowControllerV2', ['$scope', '$stateParams', 'FlowServiceV2', '
     };
     $scope.getMachineRules = getMachineRules;
 
+    // 外部动态规则源一般存在数据更新延迟，所以这里延迟100ms获取规则
+    function delayGetMachineRules() {
+      setTimeout(function () {
+        getMachineRules();
+      }, 100);
+    };
+
     var flowRuleDialog;
     $scope.editRule = function (rule) {
       $scope.currentRule = angular.copy(rule);
@@ -146,21 +153,21 @@ app.controller('FlowControllerV2', ['$scope', '$stateParams', 'FlowServiceV2', '
     function deleteRule(rule) {
       FlowService.deleteRule(rule).success(function (data) {
         if (data.code == 0) {
-          getMachineRules();
+          delayGetMachineRules();
           confirmDialog.close();
         } else {
-          alert('失败!');
+          alert('失败：' + data.msg);
         }
       });
     };
 
     function addNewRule(rule) {
       FlowService.newRule(rule).success(function (data) {
-        if (data.code == 0) {
-          getMachineRules();
+        if (data.code === 0) {
+          delayGetMachineRules();
           flowRuleDialog.close();
         } else {
-          alert('失败!');
+          alert('失败：' + data.msg);
         }
       });
     };
@@ -174,15 +181,15 @@ app.controller('FlowControllerV2', ['$scope', '$stateParams', 'FlowServiceV2', '
 
     function saveRule(rule, edit) {
       FlowService.saveRule(rule).success(function (data) {
-        if (data.code == 0) {
-          getMachineRules();
+        if (data.code === 0) {
+          delayGetMachineRules();
           if (edit) {
             flowRuleDialog.close();
           } else {
             confirmDialog.close();
           }
         } else {
-          alert('失败!');
+          alert('失败：' + data.msg);
         }
       });
     }
