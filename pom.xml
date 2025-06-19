@@ -29,6 +29,10 @@
             <email>sentinel-dev@linux.alibaba.com</email>
             <url>https://github.com/alibaba/Sentinel</url>
         </developer>
+        <!-- 扩展作者 -->
+        <developer>
+            <name>lyc</name>
+        </developer>
     </developers>
     <organization>
         <name>Alibaba Group</name>
