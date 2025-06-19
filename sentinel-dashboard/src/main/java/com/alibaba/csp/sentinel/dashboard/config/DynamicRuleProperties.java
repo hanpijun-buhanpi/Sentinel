@@ -14,7 +14,8 @@ import java.util.Properties;
  * @author lyc
  * @since 1.8-SNAPSHOT
  */
-@EnableConfigurationProperties({DynamicRuleProperties.Nacos.class, DynamicRuleProperties.Apollo.class})
+@EnableConfigurationProperties({DynamicRuleProperties.Nacos.class, DynamicRuleProperties.Apollo.class,
+        DynamicRuleProperties.Zookeeper.class})
 @ConfigurationProperties(prefix = DynamicRuleConfig.DYNAMIC_RULE_PREFIX)
 public class DynamicRuleProperties {
     /**
@@ -34,6 +35,10 @@ public class DynamicRuleProperties {
          * Apollo
          */
         APOLLO,
+        /**
+         * Zookeeper
+         */
+        ZOOKEEPER,
     }
 
     public Type getType() {
@@ -219,6 +224,88 @@ public class DynamicRuleProperties {
 
         public void setOperator(String operator) {
             this.operator = operator;
+        }
+    }
+
+    /**
+     * Zookeeper配置属性
+     *
+     * @author lyc
+     * @since 1.8-SNAPSHOT
+     */
+    @ConfigurationProperties(prefix = DynamicRuleConfig.ZOOKEEPER_DYNAMIC_RULE_PREFIX)
+    public static class Zookeeper {
+        /**
+         * Zookeeper 地址
+         */
+        private String connectString = "localhost:2181";
+        /**
+         * 会话超时（毫秒）
+         */
+        private int sessionTimeout = 60000;
+        /**
+         * 连接超时（毫秒）
+         */
+        private int connectionTimeout = 15000;
+        /**
+         * 重试次数
+         */
+        private int retryTimes = 3;
+        /**
+         * 基础重试睡眠时间（毫秒）
+         */
+        private int baseSleepTime = 1000;
+        /**
+         * 最大重试睡眠时间（毫秒）
+         */
+        private int maxSleepTime = 5000;
+
+        public String getConnectString() {
+            return connectString;
+        }
+
+        public void setConnectString(String connectString) {
+            this.connectString = connectString;
+        }
+
+        public int getSessionTimeout() {
+            return sessionTimeout;
+        }
+
+        public void setSessionTimeout(int sessionTimeout) {
+            this.sessionTimeout = sessionTimeout;
+        }
+
+        public int getConnectionTimeout() {
+            return connectionTimeout;
+        }
+
+        public void setConnectionTimeout(int connectionTimeout) {
+            this.connectionTimeout = connectionTimeout;
+        }
+
+        public int getRetryTimes() {
+            return retryTimes;
+        }
+
+        public void setRetryTimes(int retryTimes) {
+            this.retryTimes = retryTimes;
+        }
+
+        public int getBaseSleepTime() {
+            return baseSleepTime;
+        }
+
+        public void setBaseSleepTime(int baseSleepTime) {
+            this.baseSleepTime = baseSleepTime;
+        }
+
+        public int getMaxSleepTime() {
+            return maxSleepTime;
+        }
+
+        public void setMaxSleepTime(int maxSleepTime) {
+            this.maxSleepTime = maxSleepTime;
         }
     }
 }

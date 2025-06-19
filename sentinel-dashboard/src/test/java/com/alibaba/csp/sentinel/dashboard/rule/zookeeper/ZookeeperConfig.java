@@ -43,7 +43,7 @@ public class ZookeeperConfig {
     public CuratorFramework zkClient() {
         CuratorFramework zkClient =
                 CuratorFrameworkFactory.newClient("127.0.0.1:2181",
-                        new ExponentialBackoffRetry(ZookeeperConfigUtil.SLEEP_TIME, ZookeeperConfigUtil.RETRY_TIMES));
+                        new ExponentialBackoffRetry(1000, 3));
         zkClient.start();
 
         return zkClient;

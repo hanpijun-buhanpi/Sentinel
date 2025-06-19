@@ -9,11 +9,16 @@ import com.alibaba.csp.sentinel.dashboard.rule.apollo.FlowRuleApolloProvider;
 import com.alibaba.csp.sentinel.dashboard.rule.apollo.FlowRuleApolloPublisher;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.FlowRuleNacosProvider;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.FlowRuleNacosPublisher;
+import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.FlowRuleZookeeperProvider;
+import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.FlowRuleZookeeperPublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.nacos.api.config.ConfigFactory;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PreDestroy;
 import java.util.List;
 
 /**
@@ -37,6 +43,7 @@ public class DynamicRuleConfig {
     public static final String DYNAMIC_RULE_PREFIX = "rules.dynamic";
     public static final String NACOS_DYNAMIC_RULE_PREFIX = DYNAMIC_RULE_PREFIX + ".nacos";
     public static final String APOLLO_DYNAMIC_RULE_PREFIX = DYNAMIC_RULE_PREFIX + ".apollo";
+    public static final String ZOOKEEPER_DYNAMIC_RULE_PREFIX = DYNAMIC_RULE_PREFIX + ".zookeeper";
     /* Bean名称 */
     public static final String FLOW_RULE_ENTITY_ENCODER = "flowRuleEntityEncoder";
     public static final String FLOW_RULE_ENTITY_DECODER = "flowRuleEntityDecoder";
@@ -115,6 +122,47 @@ public class DynamicRuleConfig {
         @Bean(name = FLOW_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<FlowRuleEntity>> flowDynamicRulePublisher() {
             return new FlowRuleApolloPublisher();
+        }
+    }
+
+    /**
+     * Zookeeper 动态规则配置
+     *
+     * @author lyc
+     * @since 1.8-SNAPSHOT
+     */
+    @ConditionalOnProperty(prefix = DYNAMIC_RULE_PREFIX, name = "type", havingValue = "zookeeper")
+    @ConditionalOnClass(CuratorFramework.class)
+    @ConditionalOnMissingBean(DynamicRuleProvider.class)
+    @Configuration
+    public static class ZookeeperDynamicRuleConfig {
+        @Autowired
+        private DynamicRuleProperties.Zookeeper properties;
+        private CuratorFramework zkClient;
+
+        @Bean
+        public CuratorFramework curatorFramework() throws Exception {
+            zkClient = CuratorFrameworkFactory.newClient(properties.getConnectString(), properties.getSessionTimeout(), properties.getConnectionTimeout(),
+                    new ExponentialBackoffRetry(properties.getBaseSleepTime(), properties.getMaxSleepTime(), properties.getRetryTimes()));
+            zkClient.start();
+            return zkClient;
+        }
+
+        @PreDestroy
+        public void destroy() {
+            if (zkClient != null) {
+                zkClient.close();
+            }
+        }
+
+        @Bean(name = FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<FlowRuleEntity>> flowDynamicRuleProvider() {
+            return new FlowRuleZookeeperProvider();
+        }
+
+        @Bean(name = FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<FlowRuleEntity>> flowDynamicRulePublisher() {
+            return new FlowRuleZookeeperPublisher();
         }
     }
 
