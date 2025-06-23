@@ -26,12 +26,15 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author kexianjun
+ * @since 1.6.0
+ */
 public class FlowRuleZookeeperProvider implements DynamicRuleProvider<List<FlowRuleEntity>> {
 
     @Autowired

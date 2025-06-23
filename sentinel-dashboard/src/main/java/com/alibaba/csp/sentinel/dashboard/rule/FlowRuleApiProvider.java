@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Eric Zhao
+ * @since 1.4.0
  */
 public class FlowRuleApiProvider implements DynamicRuleProvider<List<FlowRuleEntity>> {
 
