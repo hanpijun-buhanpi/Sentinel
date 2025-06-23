@@ -24,7 +24,7 @@ public class ZookeeperConfigUtil {
     public static final String RULE_ROOT_PATH = "/sentinel/rule_config";
     public static final String FLOW_DATA_ID_POSTFIX = "-flow-rules";
 
-    public static String getPath(String appName) {
+    public static String getFlowPath(String appName) {
         StringBuilder stringBuilder = new StringBuilder(RULE_ROOT_PATH);
 
         if (StringUtils.isBlank(appName)) {
