@@ -44,9 +44,9 @@ public class DegradeRuleApolloPublisher implements DynamicRulePublisher<List<Deg
         String cluster = properties.getCluster();
         String namespace = properties.getNamespace();
         String operator = properties.getOperator();
-        String flowDataId = ApolloConfigUtil.getDegradeDataId(appName);
+        String dataId = ApolloConfigUtil.getDegradeDataId(appName);
         OpenItemDTO openItemDTO = new OpenItemDTO();
-        openItemDTO.setKey(flowDataId);
+        openItemDTO.setKey(dataId);
         openItemDTO.setValue(converter.convert(rules));
         openItemDTO.setComment("Program auto-join");
         openItemDTO.setDataChangeCreatedBy(operator);

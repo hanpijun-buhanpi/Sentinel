@@ -48,9 +48,9 @@ public class FlowRuleApolloProvider implements DynamicRuleProvider<List<FlowRule
 
     @Override
     public List<FlowRuleEntity> getRules(String appName) throws Exception {
-        String flowDataId = ApolloConfigUtil.getFlowDataId(appName);
+        String dataId = ApolloConfigUtil.getFlowDataId(appName);
         OpenItemDTO openItemDTO = apolloOpenApiClient.getItem(DynamicRuleProperties.Apollo.APP_ID,
-                properties.getEnv(), properties.getCluster(), properties.getNamespace(), flowDataId);
+                properties.getEnv(), properties.getCluster(), properties.getNamespace(), dataId);
         String rules = openItemDTO == null ? "" : openItemDTO.getValue();
 
         if (StringUtil.isEmpty(rules)) {

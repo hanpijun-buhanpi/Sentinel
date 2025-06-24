@@ -59,9 +59,9 @@ public class FlowRuleApolloPublisher implements DynamicRulePublisher<List<FlowRu
         String cluster = properties.getCluster();
         String namespace = properties.getNamespace();
         String operator = properties.getOperator();
-        String flowDataId = ApolloConfigUtil.getFlowDataId(appName);
+        String dataId = ApolloConfigUtil.getFlowDataId(appName);
         OpenItemDTO openItemDTO = new OpenItemDTO();
-        openItemDTO.setKey(flowDataId);
+        openItemDTO.setKey(dataId);
         openItemDTO.setValue(converter.convert(rules));
         openItemDTO.setComment("Program auto-join");
         openItemDTO.setDataChangeCreatedBy(operator);

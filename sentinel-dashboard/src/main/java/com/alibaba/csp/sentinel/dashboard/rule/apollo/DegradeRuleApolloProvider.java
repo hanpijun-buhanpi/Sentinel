@@ -33,9 +33,9 @@ public class DegradeRuleApolloProvider implements DynamicRuleProvider<List<Degra
 
     @Override
     public List<DegradeRuleEntity> getRules(String appName) throws Exception {
-        String flowDataId = ApolloConfigUtil.getDegradeDataId(appName);
+        String dataId = ApolloConfigUtil.getDegradeDataId(appName);
         OpenItemDTO openItemDTO = apolloOpenApiClient.getItem(DynamicRuleProperties.Apollo.APP_ID,
-                properties.getEnv(), properties.getCluster(), properties.getNamespace(), flowDataId);
+                properties.getEnv(), properties.getCluster(), properties.getNamespace(), dataId);
         String rules = openItemDTO == null ? "" : openItemDTO.getValue();
 
         if (StringUtil.isEmpty(rules)) {

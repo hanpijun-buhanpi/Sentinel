@@ -30,12 +30,12 @@ public class DegradeRuleZookeeperProvider implements DynamicRuleProvider<List<De
 
     @Override
     public List<DegradeRuleEntity> getRules(String appName) throws Exception {
-        String zkPath = ZookeeperConfigUtil.getDegradePath(appName);
-        Stat stat = zkClient.checkExists().forPath(zkPath);
+        String path = ZookeeperConfigUtil.getDegradePath(appName);
+        Stat stat = zkClient.checkExists().forPath(path);
         if(stat == null){
             return new ArrayList<>(0);
         }
-        byte[] bytes = zkClient.getData().forPath(zkPath);
+        byte[] bytes = zkClient.getData().forPath(path);
         if (null == bytes || bytes.length == 0) {
             return new ArrayList<>();
         }
