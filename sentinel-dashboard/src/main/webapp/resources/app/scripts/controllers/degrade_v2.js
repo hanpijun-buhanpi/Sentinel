@@ -1,6 +1,6 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.controller('DegradeCtl', ['$scope', '$stateParams', 'DegradeService', 'ngDialog', 'MachineService',
+app.controller('DegradeControllerV2', ['$scope', '$stateParams', 'DegradeServiceV2', 'ngDialog', 'MachineService',
   function ($scope, $stateParams, DegradeService, ngDialog, MachineService) {
     //初始化
     $scope.app = $stateParams.app;
@@ -42,6 +42,13 @@ app.controller('DegradeCtl', ['$scope', '$stateParams', 'DegradeService', 'ngDia
         });
     };
     $scope.getMachineRules = getMachineRules;
+
+    // 外部动态规则源一般存在数据更新延迟，所以这里延迟100ms获取规则
+    function delayGetMachineRules() {
+      setTimeout(function () {
+        getMachineRules();
+      }, 100);
+    };
 
     var degradeRuleDialog;
     $scope.editRule = function (rule) {
@@ -136,7 +143,7 @@ app.controller('DegradeCtl', ['$scope', '$stateParams', 'DegradeService', 'ngDia
     function deleteRule(rule) {
       DegradeService.deleteRule(rule).success(function (data) {
         if (data.code == 0) {
-          getMachineRules();
+          delayGetMachineRules();
           confirmDialog.close();
         } else {
           alert('失败：' + data.msg);
@@ -147,7 +154,7 @@ app.controller('DegradeCtl', ['$scope', '$stateParams', 'DegradeService', 'ngDia
     function addNewRule(rule) {
       DegradeService.newRule(rule).success(function (data) {
         if (data.code == 0) {
-          getMachineRules();
+          delayGetMachineRules();
           degradeRuleDialog.close();
         } else {
           alert('失败：' + data.msg);
@@ -158,7 +165,7 @@ app.controller('DegradeCtl', ['$scope', '$stateParams', 'DegradeService', 'ngDia
     function saveRule(rule, edit) {
       DegradeService.saveRule(rule).success(function (data) {
         if (data.code == 0) {
-          getMachineRules();
+          delayGetMachineRules();
           if (edit) {
             degradeRuleDialog.close();
           } else {

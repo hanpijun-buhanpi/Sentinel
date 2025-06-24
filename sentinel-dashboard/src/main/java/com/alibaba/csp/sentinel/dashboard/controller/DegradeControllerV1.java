@@ -50,10 +50,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Eric Zhao
  */
 @RestController
-@RequestMapping("/degrade")
-public class DegradeController {
+@RequestMapping("/v1/degrade")
+public class DegradeControllerV1 {
 
-    private final Logger logger = LoggerFactory.getLogger(DegradeController.class);
+    private final Logger logger = LoggerFactory.getLogger(DegradeControllerV1.class);
 
     @Autowired
     private RuleRepository<DegradeRuleEntity, Long> repository;

@@ -1,6 +1,6 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.service('DegradeService', ['$http', function ($http) {
+app.service('DegradeServiceV1', ['$http', function ($http) {
   this.queryMachineRules = function (app, ip, port) {
     var param = {
       app: app,
@@ -8,7 +8,7 @@ app.service('DegradeService', ['$http', function ($http) {
       port: port
     };
     return $http({
-      url: 'degrade/rules.json',
+      url: '/v1/degrade/rules.json',
       params: param,
       method: 'GET'
     });
@@ -16,7 +16,7 @@ app.service('DegradeService', ['$http', function ($http) {
 
   this.newRule = function (rule) {
     return $http({
-        url: '/degrade/rule',
+        url: '/v1/degrade/rule',
         data: rule,
         method: 'POST'
     });
@@ -35,7 +35,7 @@ app.service('DegradeService', ['$http', function ($http) {
         slowRatioThreshold: rule.slowRatioThreshold,
     };
     return $http({
-        url: '/degrade/rule/' + rule.id,
+        url: '/v1/degrade/rule/' + rule.id,
         data: param,
         method: 'PUT'
     });
@@ -43,7 +43,7 @@ app.service('DegradeService', ['$http', function ($http) {
 
   this.deleteRule = function (rule) {
       return $http({
-          url: '/degrade/rule/' + rule.id,
+          url: '/v1/degrade/rule/' + rule.id,
           method: 'DELETE'
       });
   };
