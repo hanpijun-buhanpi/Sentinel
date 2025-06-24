@@ -20,15 +20,10 @@ package com.alibaba.csp.sentinel.dashboard.controller.v2;
 
 import com.alibaba.csp.sentinel.dashboard.auth.AuthAction;
 import com.alibaba.csp.sentinel.dashboard.auth.AuthService.PrivilegeType;
-import com.alibaba.csp.sentinel.dashboard.client.SentinelApiClient;
 import com.alibaba.csp.sentinel.dashboard.config.DynamicRuleConfig;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
-import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
-import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.repository.rule.InMemoryRuleRepositoryAdapter;
-import com.alibaba.csp.sentinel.dashboard.repository.rule.RuleRepository;
 import com.alibaba.csp.sentinel.dashboard.rule.DynamicRuleProvider;
 import com.alibaba.csp.sentinel.dashboard.rule.DynamicRulePublisher;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
@@ -65,11 +60,6 @@ public class DegradeControllerV2 {
     @Autowired
     @Qualifier(DynamicRuleConfig.DEGRADE_DYNAMIC_RULE_PUBLISHER)
     private DynamicRulePublisher<List<DegradeRuleEntity>> rulePublisher;
-
-    @Autowired
-    private SentinelApiClient sentinelApiClient;
-    @Autowired
-    private AppManagement appManagement;
 
     @GetMapping("/rules.json")
     @AuthAction(PrivilegeType.READ_RULE)
@@ -175,17 +165,11 @@ public class DegradeControllerV2 {
     }
 
     private <R> Result<R> checkEntityInternal(DegradeRuleEntity entity) {
+        if (entity == null) {
+            return Result.ofFail(-1, "invalid body");
+        }
         if (StringUtil.isBlank(entity.getApp())) {
             return Result.ofFail(-1, "app can't be blank");
-        }
-        if (StringUtil.isBlank(entity.getIp())) {
-            return Result.ofFail(-1, "ip can't be null or empty");
-        }
-        if (!appManagement.isValidMachineOfApp(entity.getApp(), entity.getIp())) {
-            return Result.ofFail(-1, "given ip does not belong to given app");
-        }
-        if (entity.getPort() == null || entity.getPort() <= 0) {
-            return Result.ofFail(-1, "invalid port: " + entity.getPort());
         }
         if (StringUtil.isBlank(entity.getLimitApp())) {
             return Result.ofFail(-1, "limitApp can't be null or empty");
