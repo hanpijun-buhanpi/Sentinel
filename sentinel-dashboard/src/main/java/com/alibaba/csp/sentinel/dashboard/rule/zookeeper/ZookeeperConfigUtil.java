@@ -20,11 +20,25 @@ package com.alibaba.csp.sentinel.dashboard.rule.zookeeper;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * @author kexianjun
+ * @author Laiyancheng
+ * @since 1.6.0
+ */
 public class ZookeeperConfigUtil {
     public static final String RULE_ROOT_PATH = "/sentinel/rule_config";
     public static final String FLOW_DATA_ID_POSTFIX = "-flow-rules";
+    public static final String DEGRADE_DATA_ID_POSTFIX = "-degrade-rules";
 
     public static String getFlowPath(String appName) {
+        return getPath(appName, FLOW_DATA_ID_POSTFIX);
+    }
+
+    public static String getDegradePath(String appName) {
+        return getPath(appName, DEGRADE_DATA_ID_POSTFIX);
+    }
+
+    private static String getPath(String appName, String postfix) {
         StringBuilder stringBuilder = new StringBuilder(RULE_ROOT_PATH);
 
         if (StringUtils.isBlank(appName)) {
@@ -36,6 +50,6 @@ public class ZookeeperConfigUtil {
             stringBuilder.append("/")
                     .append(appName);
         }
-        return stringBuilder.append(FLOW_DATA_ID_POSTFIX).toString();
+        return stringBuilder.append(postfix).toString();
     }
 }

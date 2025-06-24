@@ -20,16 +20,22 @@ package com.alibaba.csp.sentinel.dashboard.rule.apollo;
 
 /**
  * @author hantianwei@gmail.com
+ * @author Laiyancheng
  * @since 1.5.0
  */
 public final class ApolloConfigUtil {
 
     public static final String FLOW_DATA_ID_POSTFIX = "-flow-rules";
+    public static final String DEGRADE_DATA_ID_POSTFIX = "-degrade-rules";
 
     private ApolloConfigUtil() {
     }
 
     public static String getFlowDataId(String appName) {
         return appName + FLOW_DATA_ID_POSTFIX;
+    }
+
+    public static String getDegradeDataId(String appName) {
+        return appName + DEGRADE_DATA_ID_POSTFIX;
     }
 }

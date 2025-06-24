@@ -3,12 +3,19 @@
  */
 package com.alibaba.csp.sentinel.dashboard.config;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.rule.*;
+import com.alibaba.csp.sentinel.dashboard.rule.apollo.DegradeRuleApolloProvider;
+import com.alibaba.csp.sentinel.dashboard.rule.apollo.DegradeRuleApolloPublisher;
 import com.alibaba.csp.sentinel.dashboard.rule.apollo.FlowRuleApolloProvider;
 import com.alibaba.csp.sentinel.dashboard.rule.apollo.FlowRuleApolloPublisher;
+import com.alibaba.csp.sentinel.dashboard.rule.nacos.DegradeRuleNacosProvider;
+import com.alibaba.csp.sentinel.dashboard.rule.nacos.DegradeRuleNacosPublisher;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.FlowRuleNacosProvider;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.FlowRuleNacosPublisher;
+import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.DegradeRuleZookeeperProvider;
+import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.DegradeRuleZookeeperPublisher;
 import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.FlowRuleZookeeperProvider;
 import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.FlowRuleZookeeperPublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
@@ -49,15 +56,29 @@ public class DynamicRuleConfig {
     public static final String FLOW_RULE_ENTITY_DECODER = "flowRuleEntityDecoder";
     public static final String FLOW_DYNAMIC_RULE_PROVIDER = "flowDynamicRuleProvider";
     public static final String FLOW_DYNAMIC_RULE_PUBLISHER = "flowDynamicRulePublisher";
+    public static final String DEGRADE_RULE_ENTITY_ENCODER = "degradeRuleEntityEncoder";
+    public static final String DEGRADE_RULE_ENTITY_DECODER = "degradeRuleEntityDecoder";
+    public static final String DEGRADE_DYNAMIC_RULE_PROVIDER = "degradeDynamicRuleProvider";
+    public static final String DEGRADE_DYNAMIC_RULE_PUBLISHER = "degradeDynamicRulePublisher";
 
-    @Bean
+    @Bean(FLOW_RULE_ENTITY_ENCODER)
     public Converter<List<FlowRuleEntity>, String> flowRuleEntityEncoder() {
         return JSON::toJSONString;
     }
 
-    @Bean
+    @Bean(FLOW_RULE_ENTITY_DECODER)
     public Converter<String, List<FlowRuleEntity>> flowRuleEntityDecoder() {
         return s -> JSON.parseArray(s, FlowRuleEntity.class);
+    }
+
+    @Bean(DEGRADE_RULE_ENTITY_ENCODER)
+    public Converter<List<DegradeRuleEntity>, String> degradeRuleEntityEncoder() {
+        return JSON::toJSONString;
+    }
+
+    @Bean(DEGRADE_RULE_ENTITY_DECODER)
+    public Converter<String, List<DegradeRuleEntity>> degradeRuleEntityDecoder() {
+        return s -> JSON.parseArray(s, DegradeRuleEntity.class);
     }
 
     /**
@@ -87,6 +108,16 @@ public class DynamicRuleConfig {
         @Bean(name = FLOW_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<FlowRuleEntity>> flowDynamicRulePublisher() {
             return new FlowRuleNacosPublisher();
+        }
+
+        @Bean(name = DEGRADE_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<DegradeRuleEntity>> degradeDynamicRuleProvider() {
+            return new DegradeRuleNacosProvider();
+        }
+
+        @Bean(name = DEGRADE_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<DegradeRuleEntity>> degradeDynamicRulePublisher() {
+            return new DegradeRuleNacosPublisher();
         }
     }
 
@@ -122,6 +153,16 @@ public class DynamicRuleConfig {
         @Bean(name = FLOW_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<FlowRuleEntity>> flowDynamicRulePublisher() {
             return new FlowRuleApolloPublisher();
+        }
+
+        @Bean(name = DEGRADE_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<DegradeRuleEntity>> degradeDynamicRuleProvider() {
+            return new DegradeRuleApolloProvider();
+        }
+
+        @Bean(name = DEGRADE_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<DegradeRuleEntity>> degradeDynamicRulePublisher() {
+            return new DegradeRuleApolloPublisher();
         }
     }
 
@@ -164,6 +205,16 @@ public class DynamicRuleConfig {
         public DynamicRulePublisher<List<FlowRuleEntity>> flowDynamicRulePublisher() {
             return new FlowRuleZookeeperPublisher();
         }
+
+        @Bean(name = DEGRADE_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<DegradeRuleEntity>> degradeDynamicRuleProvider() {
+            return new DegradeRuleZookeeperProvider();
+        }
+
+        @Bean(name = DEGRADE_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<DegradeRuleEntity>> degradeDynamicRulePublisher() {
+            return new DegradeRuleZookeeperPublisher();
+        }
     }
 
     /**
@@ -184,6 +235,16 @@ public class DynamicRuleConfig {
         @Bean(name = FLOW_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<FlowRuleEntity>> flowDynamicRulePublisher() {
             return new FlowRuleApiPublisher();
+        }
+
+        @Bean(name = DEGRADE_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<DegradeRuleEntity>> degradeDynamicRuleProvider() {
+            return new DegradeRuleApiProvider();
+        }
+
+        @Bean(name = DEGRADE_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<DegradeRuleEntity>> degradeDynamicRulePublisher() {
+            return new DegradeRuleApiPublisher();
         }
     }
 }

@@ -20,6 +20,7 @@ package com.alibaba.csp.sentinel.dashboard.rule.nacos;
 
 /**
  * @author Eric Zhao
+ * @author Laiyancheng
  * @since 1.4.0
  */
 public final class NacosConfigUtil {
@@ -27,6 +28,7 @@ public final class NacosConfigUtil {
     public static final String GROUP_ID = "SENTINEL_GROUP";
     
     public static final String FLOW_DATA_ID_POSTFIX = "-flow-rules";
+    public static final String DEGRADE_DATA_ID_POSTFIX = "-degrade-rules";
     public static final String PARAM_FLOW_DATA_ID_POSTFIX = "-param-rules";
     public static final String CLUSTER_MAP_DATA_ID_POSTFIX = "-cluster-map";
 
@@ -45,5 +47,9 @@ public final class NacosConfigUtil {
 
     public static String getFlowDataId(String appName) {
         return appName + FLOW_DATA_ID_POSTFIX;
+    }
+
+    public static String getDegradeDataId(String appName) {
+        return appName + DEGRADE_DATA_ID_POSTFIX;
     }
 }
