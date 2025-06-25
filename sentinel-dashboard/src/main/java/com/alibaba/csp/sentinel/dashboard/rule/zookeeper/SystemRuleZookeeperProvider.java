@@ -30,7 +30,7 @@ public class SystemRuleZookeeperProvider implements DynamicRuleProvider<List<Sys
 
     @Override
     public List<SystemRuleEntity> getRules(String appName) throws Exception {
-        String path = ZookeeperConfigUtil.getDegradePath(appName);
+        String path = ZookeeperConfigUtil.getSystemPath(appName);
         Stat stat = zkClient.checkExists().forPath(path);
         if(stat == null){
             return new ArrayList<>(0);

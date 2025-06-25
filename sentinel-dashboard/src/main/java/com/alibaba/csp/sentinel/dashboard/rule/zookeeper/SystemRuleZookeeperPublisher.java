@@ -33,7 +33,7 @@ public class SystemRuleZookeeperPublisher implements DynamicRulePublisher<List<S
     public void publish(String appName, List<SystemRuleEntity> rules) throws Exception {
         AssertUtil.notEmpty(appName, "app name cannot be empty");
 
-        String path = ZookeeperConfigUtil.getDegradePath(appName);
+        String path = ZookeeperConfigUtil.getSystemPath(appName);
         Stat stat = zkClient.checkExists().forPath(path);
         if (stat == null) {
             zkClient.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT).forPath(path, null);
