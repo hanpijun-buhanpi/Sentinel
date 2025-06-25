@@ -3,21 +3,11 @@
  */
 package com.alibaba.csp.sentinel.dashboard.config;
 
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
 import com.alibaba.csp.sentinel.dashboard.rule.*;
-import com.alibaba.csp.sentinel.dashboard.rule.apollo.DegradeRuleApolloProvider;
-import com.alibaba.csp.sentinel.dashboard.rule.apollo.DegradeRuleApolloPublisher;
-import com.alibaba.csp.sentinel.dashboard.rule.apollo.FlowRuleApolloProvider;
-import com.alibaba.csp.sentinel.dashboard.rule.apollo.FlowRuleApolloPublisher;
-import com.alibaba.csp.sentinel.dashboard.rule.nacos.DegradeRuleNacosProvider;
-import com.alibaba.csp.sentinel.dashboard.rule.nacos.DegradeRuleNacosPublisher;
-import com.alibaba.csp.sentinel.dashboard.rule.nacos.FlowRuleNacosProvider;
-import com.alibaba.csp.sentinel.dashboard.rule.nacos.FlowRuleNacosPublisher;
-import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.DegradeRuleZookeeperProvider;
-import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.DegradeRuleZookeeperPublisher;
-import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.FlowRuleZookeeperProvider;
-import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.FlowRuleZookeeperPublisher;
+import com.alibaba.csp.sentinel.dashboard.rule.apollo.*;
+import com.alibaba.csp.sentinel.dashboard.rule.nacos.*;
+import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.*;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.nacos.api.config.ConfigFactory;
@@ -60,6 +50,10 @@ public class DynamicRuleConfig {
     public static final String DEGRADE_RULE_ENTITY_DECODER = "degradeRuleEntityDecoder";
     public static final String DEGRADE_DYNAMIC_RULE_PROVIDER = "degradeDynamicRuleProvider";
     public static final String DEGRADE_DYNAMIC_RULE_PUBLISHER = "degradeDynamicRulePublisher";
+    public static final String SYSTEM_RULE_ENTITY_ENCODER = "systemRuleEntityEncoder";
+    public static final String SYSTEM_RULE_ENTITY_DECODER = "systemRuleEntityDecoder";
+    public static final String SYSTEM_DYNAMIC_RULE_PROVIDER = "systemDynamicRuleProvider";
+    public static final String SYSTEM_DYNAMIC_RULE_PUBLISHER = "systemDynamicRulePublisher";
 
     @Bean(FLOW_RULE_ENTITY_ENCODER)
     public Converter<List<FlowRuleEntity>, String> flowRuleEntityEncoder() {
@@ -79,6 +73,16 @@ public class DynamicRuleConfig {
     @Bean(DEGRADE_RULE_ENTITY_DECODER)
     public Converter<String, List<DegradeRuleEntity>> degradeRuleEntityDecoder() {
         return s -> JSON.parseArray(s, DegradeRuleEntity.class);
+    }
+
+    @Bean(SYSTEM_RULE_ENTITY_ENCODER)
+    public Converter<List<SystemRuleEntity>, String> systemRuleEntityEncoder() {
+        return JSON::toJSONString;
+    }
+
+    @Bean(SYSTEM_RULE_ENTITY_DECODER)
+    public Converter<String, List<SystemRuleEntity>> systemRuleEntityDecoder() {
+        return s -> JSON.parseArray(s, SystemRuleEntity.class);
     }
 
     /**
@@ -118,6 +122,16 @@ public class DynamicRuleConfig {
         @Bean(name = DEGRADE_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<DegradeRuleEntity>> degradeDynamicRulePublisher() {
             return new DegradeRuleNacosPublisher();
+        }
+
+        @Bean(name = SYSTEM_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<SystemRuleEntity>> systemDynamicRuleProvider() {
+            return new SystemRuleNacosProvider();
+        }
+
+        @Bean(name = SYSTEM_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<SystemRuleEntity>> systemDynamicRulePublisher() {
+            return new SystemRuleNacosPublisher();
         }
     }
 
@@ -163,6 +177,16 @@ public class DynamicRuleConfig {
         @Bean(name = DEGRADE_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<DegradeRuleEntity>> degradeDynamicRulePublisher() {
             return new DegradeRuleApolloPublisher();
+        }
+
+        @Bean(name = SYSTEM_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<SystemRuleEntity>> systemDynamicRuleProvider() {
+            return new SystemRuleApolloProvider();
+        }
+
+        @Bean(name = SYSTEM_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<SystemRuleEntity>> systemDynamicRulePublisher() {
+            return new SystemRuleApolloPublisher();
         }
     }
 
@@ -215,6 +239,16 @@ public class DynamicRuleConfig {
         public DynamicRulePublisher<List<DegradeRuleEntity>> degradeDynamicRulePublisher() {
             return new DegradeRuleZookeeperPublisher();
         }
+
+        @Bean(name = SYSTEM_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<SystemRuleEntity>> systemDynamicRuleProvider() {
+            return new SystemRuleZookeeperProvider();
+        }
+
+        @Bean(name = SYSTEM_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<SystemRuleEntity>> systemDynamicRulePublisher() {
+            return new SystemRuleZookeeperPublisher();
+        }
     }
 
     /**
@@ -245,6 +279,16 @@ public class DynamicRuleConfig {
         @Bean(name = DEGRADE_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<DegradeRuleEntity>> degradeDynamicRulePublisher() {
             return new DegradeRuleApiPublisher();
+        }
+
+        @Bean(name = SYSTEM_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<SystemRuleEntity>> systemDynamicRuleProvider() {
+            return new SystemRuleApiProvider();
+        }
+
+        @Bean(name = SYSTEM_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<SystemRuleEntity>> systemDynamicRulePublisher() {
+            return new SystemRuleApiPublisher();
         }
     }
 }

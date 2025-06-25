@@ -27,6 +27,7 @@ public final class ApolloConfigUtil {
 
     public static final String FLOW_DATA_ID_POSTFIX = "-flow-rules";
     public static final String DEGRADE_DATA_ID_POSTFIX = "-degrade-rules";
+    public static final String SYSTEM_DATA_ID_POSTFIX = "-system-rules";
 
     private ApolloConfigUtil() {
     }
@@ -37,5 +38,9 @@ public final class ApolloConfigUtil {
 
     public static String getDegradeDataId(String appName) {
         return appName + DEGRADE_DATA_ID_POSTFIX;
+    }
+
+    public static String getSystemDataId(String appName) {
+        return appName + SYSTEM_DATA_ID_POSTFIX;
     }
 }

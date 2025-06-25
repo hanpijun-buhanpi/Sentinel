@@ -496,6 +496,16 @@ public class SentinelApiClient {
         }
     }
 
+    public List<ParamFlowRuleEntity> fetchParamFlowRuleOfMachine(String app, String ip, int port) {
+        List<ParamFlowRule> rules = fetchItems(ip, port, GET_PARAM_RULE_PATH, null, ParamFlowRule.class);
+        if (rules != null) {
+            return rules.stream().map(rule -> ParamFlowRuleEntity.fromParamFlowRule(app, ip, port, rule))
+                .collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Fetch all parameter flow rules from provided machine.
      *
