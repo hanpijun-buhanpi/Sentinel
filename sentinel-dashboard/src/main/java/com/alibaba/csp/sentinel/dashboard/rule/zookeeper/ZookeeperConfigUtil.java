@@ -30,6 +30,7 @@ public class ZookeeperConfigUtil {
     public static final String FLOW_DATA_ID_POSTFIX = "-flow-rules";
     public static final String DEGRADE_DATA_ID_POSTFIX = "-degrade-rules";
     public static final String SYSTEM_DATA_ID_POSTFIX = "-system-rules";
+    public static final String AUTHORITY_DATA_ID_POSTFIX = "-authority-rules";
 
     public static String getFlowPath(String appName) {
         return getPath(appName, FLOW_DATA_ID_POSTFIX);
@@ -41,6 +42,10 @@ public class ZookeeperConfigUtil {
 
     public static String getSystemPath(String appName) {
         return getPath(appName, SYSTEM_DATA_ID_POSTFIX);
+    }
+
+    public static String getAuthorityPath(String appName) {
+        return getPath(appName, AUTHORITY_DATA_ID_POSTFIX);
     }
 
     private static String getPath(String appName, String postfix) {

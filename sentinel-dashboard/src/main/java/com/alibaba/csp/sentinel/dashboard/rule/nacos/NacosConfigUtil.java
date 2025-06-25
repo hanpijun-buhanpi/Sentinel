@@ -30,6 +30,7 @@ public final class NacosConfigUtil {
     public static final String FLOW_DATA_ID_POSTFIX = "-flow-rules";
     public static final String DEGRADE_DATA_ID_POSTFIX = "-degrade-rules";
     public static final String SYSTEM_DATA_ID_POSTFIX = "-system-rules";
+    public static final String AUTHORITY_DATA_ID_POSTFIX = "-authority-rules";
     public static final String PARAM_FLOW_DATA_ID_POSTFIX = "-param-rules";
     public static final String CLUSTER_MAP_DATA_ID_POSTFIX = "-cluster-map";
 
@@ -56,5 +57,9 @@ public final class NacosConfigUtil {
 
     public static String getSystemDataId(String appName) {
         return appName + SYSTEM_DATA_ID_POSTFIX;
+    }
+
+    public static String getAuthorityDataId(String appName) {
+        return appName + AUTHORITY_DATA_ID_POSTFIX;
     }
 }

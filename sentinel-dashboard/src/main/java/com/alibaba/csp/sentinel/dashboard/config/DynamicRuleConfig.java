@@ -54,6 +54,10 @@ public class DynamicRuleConfig {
     public static final String SYSTEM_RULE_ENTITY_DECODER = "systemRuleEntityDecoder";
     public static final String SYSTEM_DYNAMIC_RULE_PROVIDER = "systemDynamicRuleProvider";
     public static final String SYSTEM_DYNAMIC_RULE_PUBLISHER = "systemDynamicRulePublisher";
+    public static final String AUTHORITY_RULE_ENTITY_ENCODER = "authorityRuleEntityEncoder";
+    public static final String AUTHORITY_RULE_ENTITY_DECODER = "authorityRuleEntityDecoder";
+    public static final String AUTHORITY_DYNAMIC_RULE_PROVIDER = "authorityDynamicRuleProvider";
+    public static final String AUTHORITY_DYNAMIC_RULE_PUBLISHER = "authorityDynamicRulePublisher";
 
     @Bean(FLOW_RULE_ENTITY_ENCODER)
     public Converter<List<FlowRuleEntity>, String> flowRuleEntityEncoder() {
@@ -83,6 +87,16 @@ public class DynamicRuleConfig {
     @Bean(SYSTEM_RULE_ENTITY_DECODER)
     public Converter<String, List<SystemRuleEntity>> systemRuleEntityDecoder() {
         return s -> JSON.parseArray(s, SystemRuleEntity.class);
+    }
+
+    @Bean(AUTHORITY_RULE_ENTITY_ENCODER)
+    public Converter<List<AuthorityRuleEntity>, String> authorityRuleEntityEncoder() {
+        return JSON::toJSONString;
+    }
+
+    @Bean(AUTHORITY_RULE_ENTITY_DECODER)
+    public Converter<String, List<AuthorityRuleEntity>> authorityRuleEntityDecoder() {
+        return s -> JSON.parseArray(s, AuthorityRuleEntity.class);
     }
 
     /**
@@ -132,6 +146,16 @@ public class DynamicRuleConfig {
         @Bean(name = SYSTEM_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<SystemRuleEntity>> systemDynamicRulePublisher() {
             return new SystemRuleNacosPublisher();
+        }
+
+        @Bean(name = AUTHORITY_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<AuthorityRuleEntity>> authorityDynamicRuleProvider() {
+            return new AuthorityRuleNacosProvider();
+        }
+
+        @Bean(name = AUTHORITY_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<AuthorityRuleEntity>> authorityDynamicRulePublisher() {
+            return new AuthorityRuleNacosPublisher();
         }
     }
 
@@ -187,6 +211,16 @@ public class DynamicRuleConfig {
         @Bean(name = SYSTEM_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<SystemRuleEntity>> systemDynamicRulePublisher() {
             return new SystemRuleApolloPublisher();
+        }
+
+        @Bean(name = AUTHORITY_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<AuthorityRuleEntity>> authorityDynamicRuleProvider() {
+            return new AuthorityRuleApolloProvider();
+        }
+
+        @Bean(name = AUTHORITY_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<AuthorityRuleEntity>> authorityDynamicRulePublisher() {
+            return new AuthorityRuleApolloPublisher();
         }
     }
 
@@ -249,6 +283,16 @@ public class DynamicRuleConfig {
         public DynamicRulePublisher<List<SystemRuleEntity>> systemDynamicRulePublisher() {
             return new SystemRuleZookeeperPublisher();
         }
+
+        @Bean(name = AUTHORITY_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<AuthorityRuleEntity>> authorityDynamicRuleProvider() {
+            return new AuthorityRuleZookeeperProvider();
+        }
+
+        @Bean(name = AUTHORITY_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<AuthorityRuleEntity>> authorityDynamicRulePublisher() {
+            return new AuthorityRuleZookeeperPublisher();
+        }
     }
 
     /**
@@ -289,6 +333,16 @@ public class DynamicRuleConfig {
         @Bean(name = SYSTEM_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<SystemRuleEntity>> systemDynamicRulePublisher() {
             return new SystemRuleApiPublisher();
+        }
+
+        @Bean(name = AUTHORITY_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<AuthorityRuleEntity>> authorityDynamicRuleProvider() {
+            return new AuthorityRuleApiProvider();
+        }
+
+        @Bean(name = AUTHORITY_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<AuthorityRuleEntity>> authorityDynamicRulePublisher() {
+            return new AuthorityRuleApiPublisher();
         }
     }
 }
