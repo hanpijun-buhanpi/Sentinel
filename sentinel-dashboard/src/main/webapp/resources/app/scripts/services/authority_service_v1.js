@@ -1,7 +1,7 @@
 /**
  * Authority rule service.
  */
-angular.module('sentinelDashboardApp').service('AuthorityRuleService', ['$http', function ($http) {
+angular.module('sentinelDashboardApp').service('AuthorityRuleServiceV1', ['$http', function ($http) {
     this.queryMachineRules = function(app, ip, port) {
         var param = {
             app: app,
@@ -9,7 +9,7 @@ angular.module('sentinelDashboardApp').service('AuthorityRuleService', ['$http',
             port: port
         };
         return $http({
-            url: '/authority/rules',
+            url: '/v1/authority/rules',
             params: param,
             method: 'GET'
         });
@@ -17,7 +17,7 @@ angular.module('sentinelDashboardApp').service('AuthorityRuleService', ['$http',
 
     this.addNewRule = function(rule) {
         return $http({
-            url: '/authority/rule',
+            url: '/v1/authority/rule',
             data: rule,
             method: 'POST'
         });
@@ -25,7 +25,7 @@ angular.module('sentinelDashboardApp').service('AuthorityRuleService', ['$http',
 
     this.saveRule = function (entity) {
         return $http({
-            url: '/authority/rule/' + entity.id,
+            url: '/v1/authority/rule/' + entity.id,
             data: entity,
             method: 'PUT'
         });
@@ -33,7 +33,7 @@ angular.module('sentinelDashboardApp').service('AuthorityRuleService', ['$http',
 
     this.deleteRule = function (entity) {
         return $http({
-            url: '/authority/rule/' + entity.id,
+            url: '/v1/authority/rule/' + entity.id,
             method: 'DELETE'
         });
     };

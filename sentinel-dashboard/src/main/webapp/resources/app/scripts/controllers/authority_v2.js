@@ -1,7 +1,7 @@
 /**
  * Authority rule controller.
  */
-angular.module('sentinelDashboardApp').controller('AuthorityRuleController', ['$scope', '$stateParams', 'AuthorityRuleService', 'ngDialog',
+angular.module('sentinelDashboardApp').controller('AuthorityRuleControllerV2', ['$scope', '$stateParams', 'AuthorityRuleServiceV2', 'ngDialog',
     'MachineService',
     function ($scope, $stateParams, AuthorityRuleService, ngDialog,
               MachineService) {
@@ -50,10 +50,15 @@ angular.module('sentinelDashboardApp').controller('AuthorityRuleController', ['$
                 });
         };
         $scope.getMachineRules = getMachineRules;
-        getMachineRules();
+
+        // 外部动态规则源一般存在数据更新延迟，所以这里延迟100ms获取规则
+        function delayGetMachineRules() {
+            setTimeout(function () {
+                getMachineRules();
+            }, 100);
+        };
 
         var authorityRuleDialog;
-
         $scope.editRule = function (rule) {
             $scope.currentRule = angular.copy(rule);
             $scope.authorityRuleDialog = {
@@ -108,7 +113,7 @@ angular.module('sentinelDashboardApp').controller('AuthorityRuleController', ['$
         function addNewRuleAndPush(rule) {
             AuthorityRuleService.addNewRule(rule).success((data) => {
                 if (data.success) {
-                    getMachineRules();
+                    delayGetMachineRules();
                     authorityRuleDialog.close();
                 } else {
                     alert('添加规则失败：' + data.msg);
@@ -126,7 +131,7 @@ angular.module('sentinelDashboardApp').controller('AuthorityRuleController', ['$
             AuthorityRuleService.saveRule(rule).success(function (data) {
                 if (data.success) {
                     alert("修改规则成功");
-                    getMachineRules();
+                    delayGetMachineRules();
                     if (edit) {
                         authorityRuleDialog.close();
                     } else {
@@ -151,7 +156,7 @@ angular.module('sentinelDashboardApp').controller('AuthorityRuleController', ['$
             }
             AuthorityRuleService.deleteRule(entity).success((data) => {
                 if (data.code == 0) {
-                    getMachineRules();
+                    delayGetMachineRules();
                     confirmDialog.close();
                 } else {
                     alert('删除规则失败：' + data.msg);

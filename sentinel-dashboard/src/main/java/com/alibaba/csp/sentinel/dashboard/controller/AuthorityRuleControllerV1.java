@@ -48,10 +48,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 0.2.1
  */
 @RestController
-@RequestMapping(value = "/authority")
-public class AuthorityRuleController {
+@RequestMapping(value = "/v1/authority")
+public class AuthorityRuleControllerV1 {
 
-    private final Logger logger = LoggerFactory.getLogger(AuthorityRuleController.class);
+    private final Logger logger = LoggerFactory.getLogger(AuthorityRuleControllerV1.class);
 
     @Autowired
     private SentinelApiClient sentinelApiClient;

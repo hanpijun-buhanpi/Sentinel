@@ -222,16 +222,32 @@ angular
           }
       })
 
-      .state('dashboard.authority', {
-            templateUrl: 'app/views/authority.html',
+      .state('dashboard.authorityV1', {
+            templateUrl: 'app/views/authority_v1.html',
             url: '/authority/:app',
-            controller: 'AuthorityRuleController',
+            controller: 'AuthorityRuleControllerV1',
             resolve: {
                 loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
                     return $ocLazyLoad.load({
                         name: 'sentinelDashboardApp',
                         files: [
-                            'app/scripts/controllers/authority.js',
+                            'app/scripts/controllers/authority_v1.js',
+                        ]
+                    });
+                }]
+            }
+       })
+
+      .state('dashboard.authorityV2', {
+            templateUrl: 'app/views/authority_v2.html',
+            url: '/v2/authority/:app',
+            controller: 'AuthorityRuleControllerV2',
+            resolve: {
+                loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'sentinelDashboardApp',
+                        files: [
+                            'app/scripts/controllers/authority_v2.js',
                         ]
                     });
                 }]
