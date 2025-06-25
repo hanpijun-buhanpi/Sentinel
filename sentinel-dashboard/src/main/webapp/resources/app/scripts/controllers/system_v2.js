@@ -1,6 +1,6 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.controller('SystemCtl', ['$scope', '$stateParams', 'SystemService', 'ngDialog', 'MachineService',
+app.controller('SystemControllerV2', ['$scope', '$stateParams', 'SystemServiceV2', 'ngDialog', 'MachineService',
   function ($scope, $stateParams, SystemService,
     ngDialog, MachineService) {
     //初始化
@@ -56,8 +56,15 @@ app.controller('SystemCtl', ['$scope', '$stateParams', 'SystemService', 'ngDialo
           }
         });
     }
-
     $scope.getMachineRules = getMachineRules;
+
+    // 外部动态规则源一般存在数据更新延迟，所以这里延迟100ms获取规则
+    function delayGetMachineRules() {
+      setTimeout(function () {
+        getMachineRules();
+      }, 100);
+    };
+
     var systemRuleDialog;
     $scope.editRule = function (rule) {
       $scope.currentRule = angular.copy(rule);
@@ -161,7 +168,7 @@ app.controller('SystemCtl', ['$scope', '$stateParams', 'SystemService', 'ngDialo
     function deleteRule(rule) {
       SystemService.deleteRule(rule).success(function (data) {
         if (data.code === 0) {
-          getMachineRules();
+          delayGetMachineRules();
           confirmDialog.close();
         } else if (data.msg != null) {
             alert('失败：' + data.msg);
@@ -178,7 +185,7 @@ app.controller('SystemCtl', ['$scope', '$stateParams', 'SystemService', 'ngDialo
       }
       SystemService.newRule(rule).success(function (data) {
         if (data.code === 0) {
-          getMachineRules();
+          delayGetMachineRules();
           systemRuleDialog.close();
         } else if (data.msg != null) {
           alert('失败：' + data.msg);
@@ -191,7 +198,7 @@ app.controller('SystemCtl', ['$scope', '$stateParams', 'SystemService', 'ngDialo
     function saveRule(rule, edit) {
       SystemService.saveRule(rule).success(function (data) {
         if (data.code === 0) {
-          getMachineRules();
+          delayGetMachineRules();
           if (edit) {
             systemRuleDialog.close();
           } else {

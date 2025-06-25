@@ -40,10 +40,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author leyou(lihao)
  */
 @RestController
-@RequestMapping("/system")
-public class SystemController {
+@RequestMapping("/v1/system")
+public class SystemControllerV1 {
 
-    private final Logger logger = LoggerFactory.getLogger(SystemController.class);
+    private final Logger logger = LoggerFactory.getLogger(SystemControllerV1.class);
 
     @Autowired
     private RuleRepository<SystemRuleEntity, Long> repository;
