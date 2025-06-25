@@ -3,7 +3,7 @@
  * 
  * @author Eric Zhao
  */
-angular.module('sentinelDashboardApp').controller('ParamFlowController', ['$scope', '$stateParams', 'ParamFlowService', 'ngDialog',
+angular.module('sentinelDashboardApp').controller('ParamFlowControllerV1', ['$scope', '$stateParams', 'ParamFlowServiceV1', 'ngDialog',
   'MachineService',
   function ($scope, $stateParams, ParamFlowService, ngDialog,
     MachineService) {

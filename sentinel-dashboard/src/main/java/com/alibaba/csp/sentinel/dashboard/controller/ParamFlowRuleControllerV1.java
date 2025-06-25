@@ -54,10 +54,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 0.2.1
  */
 @RestController
-@RequestMapping(value = "/paramFlow")
-public class ParamFlowRuleController {
+@RequestMapping(value = "/v1/paramFlow")
+public class ParamFlowRuleControllerV1 {
 
-    private final Logger logger = LoggerFactory.getLogger(ParamFlowRuleController.class);
+    private final Logger logger = LoggerFactory.getLogger(ParamFlowRuleControllerV1.class);
 
     @Autowired
     private SentinelApiClient sentinelApiClient;
