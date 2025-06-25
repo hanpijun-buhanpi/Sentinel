@@ -58,6 +58,10 @@ public class DynamicRuleConfig {
     public static final String AUTHORITY_RULE_ENTITY_DECODER = "authorityRuleEntityDecoder";
     public static final String AUTHORITY_DYNAMIC_RULE_PROVIDER = "authorityDynamicRuleProvider";
     public static final String AUTHORITY_DYNAMIC_RULE_PUBLISHER = "authorityDynamicRulePublisher";
+    public static final String PARAM_FLOW_RULE_ENTITY_ENCODER = "paramFlowRuleEntityEncoder";
+    public static final String PARAM_FLOW_RULE_ENTITY_DECODER = "paramFlowRuleEntityDecoder";
+    public static final String PARAM_FLOW_DYNAMIC_RULE_PROVIDER = "paramFlowDynamicRuleProvider";
+    public static final String PARAM_FLOW_DYNAMIC_RULE_PUBLISHER = "paramFlowDynamicRulePublisher";
 
     @Bean(FLOW_RULE_ENTITY_ENCODER)
     public Converter<List<FlowRuleEntity>, String> flowRuleEntityEncoder() {
@@ -97,6 +101,16 @@ public class DynamicRuleConfig {
     @Bean(AUTHORITY_RULE_ENTITY_DECODER)
     public Converter<String, List<AuthorityRuleEntity>> authorityRuleEntityDecoder() {
         return s -> JSON.parseArray(s, AuthorityRuleEntity.class);
+    }
+
+    @Bean(PARAM_FLOW_RULE_ENTITY_ENCODER)
+    public Converter<List<ParamFlowRuleEntity>, String> paramFlowRuleEntityEncoder() {
+        return JSON::toJSONString;
+    }
+
+    @Bean(PARAM_FLOW_RULE_ENTITY_DECODER)
+    public Converter<String, List<ParamFlowRuleEntity>> paramFlowRuleEntityDecoder() {
+        return s -> JSON.parseArray(s, ParamFlowRuleEntity.class);
     }
 
     /**
@@ -156,6 +170,16 @@ public class DynamicRuleConfig {
         @Bean(name = AUTHORITY_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<AuthorityRuleEntity>> authorityDynamicRulePublisher() {
             return new AuthorityRuleNacosPublisher();
+        }
+
+        @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<ParamFlowRuleEntity>> paramFlowDynamicRuleProvider() {
+            return new ParamFlowRuleNacosProvider();
+        }
+
+        @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<ParamFlowRuleEntity>> paramFlowDynamicRulePublisher() {
+            return new ParamFlowRuleNacosPublisher();
         }
     }
 
@@ -221,6 +245,16 @@ public class DynamicRuleConfig {
         @Bean(name = AUTHORITY_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<AuthorityRuleEntity>> authorityDynamicRulePublisher() {
             return new AuthorityRuleApolloPublisher();
+        }
+
+        @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<ParamFlowRuleEntity>> paramFlowDynamicRuleProvider() {
+            return new ParamFlowRuleApolloProvider();
+        }
+
+        @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<ParamFlowRuleEntity>> paramFlowDynamicRulePublisher() {
+            return new ParamFlowRuleApolloPublisher();
         }
     }
 
@@ -293,6 +327,16 @@ public class DynamicRuleConfig {
         public DynamicRulePublisher<List<AuthorityRuleEntity>> authorityDynamicRulePublisher() {
             return new AuthorityRuleZookeeperPublisher();
         }
+
+        @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<ParamFlowRuleEntity>> paramFlowDynamicRuleProvider() {
+            return new ParamFlowRuleZookeeperProvider();
+        }
+
+        @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<ParamFlowRuleEntity>> paramFlowDynamicRulePublisher() {
+            return new ParamFlowRuleZookeeperPublisher();
+        }
     }
 
     /**
@@ -343,6 +387,16 @@ public class DynamicRuleConfig {
         @Bean(name = AUTHORITY_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<AuthorityRuleEntity>> authorityDynamicRulePublisher() {
             return new AuthorityRuleApiPublisher();
+        }
+
+        @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<ParamFlowRuleEntity>> paramFlowDynamicRuleProvider() {
+            return new ParamFlowRuleApiProvider();
+        }
+
+        @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<ParamFlowRuleEntity>> paramFlowDynamicRulePublisher() {
+            return new ParamFlowRuleApiPublisher();
         }
     }
 }
