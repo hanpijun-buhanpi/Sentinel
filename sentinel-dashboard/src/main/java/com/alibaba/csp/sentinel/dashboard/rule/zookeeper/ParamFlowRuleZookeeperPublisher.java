@@ -33,7 +33,7 @@ public class ParamFlowRuleZookeeperPublisher implements DynamicRulePublisher<Lis
     public void publish(String appName, List<ParamFlowRuleEntity> rules) throws Exception {
         AssertUtil.notEmpty(appName, "app name cannot be empty");
 
-        String path = ZookeeperConfigUtil.getParamFLowPath(appName);
+        String path = ZookeeperConfigUtil.getParamFlowPath(appName);
         Stat stat = zkClient.checkExists().forPath(path);
         if (stat == null) {
             zkClient.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT).forPath(path, null);

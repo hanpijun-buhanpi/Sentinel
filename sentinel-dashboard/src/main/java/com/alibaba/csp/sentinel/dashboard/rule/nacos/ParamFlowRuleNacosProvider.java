@@ -31,7 +31,7 @@ public class ParamFlowRuleNacosProvider implements DynamicRuleProvider<List<Para
 
     @Override
     public List<ParamFlowRuleEntity> getRules(String appName) throws Exception {
-        String rules = configService.getConfig(NacosConfigUtil.getParamFLowDataId(appName), GROUP_ID, 3000);
+        String rules = configService.getConfig(NacosConfigUtil.getParamFlowDataId(appName), GROUP_ID, 3000);
         if (StringUtil.isEmpty(rules)) {
             return new ArrayList<>();
         }

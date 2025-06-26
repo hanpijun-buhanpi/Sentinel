@@ -33,7 +33,7 @@ public class ParamFlowRuleApolloProvider implements DynamicRuleProvider<List<Par
 
     @Override
     public List<ParamFlowRuleEntity> getRules(String appName) throws Exception {
-        String flowDataId = ApolloConfigUtil.getParamFLowDataId(appName);
+        String flowDataId = ApolloConfigUtil.getParamFlowDataId(appName);
         OpenItemDTO openItemDTO = apolloOpenApiClient.getItem(DynamicRuleProperties.Apollo.APP_ID,
                 properties.getEnv(), properties.getCluster(), properties.getNamespace(), flowDataId);
         String rules = openItemDTO == null ? "" : openItemDTO.getValue();

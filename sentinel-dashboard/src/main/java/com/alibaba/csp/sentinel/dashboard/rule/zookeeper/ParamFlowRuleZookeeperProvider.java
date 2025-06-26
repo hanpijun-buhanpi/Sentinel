@@ -30,7 +30,7 @@ public class ParamFlowRuleZookeeperProvider implements DynamicRuleProvider<List<
 
     @Override
     public List<ParamFlowRuleEntity> getRules(String appName) throws Exception {
-        String zkPath = ZookeeperConfigUtil.getParamFLowPath(appName);
+        String zkPath = ZookeeperConfigUtil.getParamFlowPath(appName);
         Stat stat = zkClient.checkExists().forPath(zkPath);
         if(stat == null){
             return new ArrayList<>(0);

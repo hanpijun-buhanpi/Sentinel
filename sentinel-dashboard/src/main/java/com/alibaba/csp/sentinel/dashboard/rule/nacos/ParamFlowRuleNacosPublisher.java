@@ -34,6 +34,6 @@ public class ParamFlowRuleNacosPublisher implements DynamicRulePublisher<List<Pa
         if (rules == null) {
             return;
         }
-        configService.publishConfig(NacosConfigUtil.getParamFLowDataId(appName), GROUP_ID, converter.convert(rules));
+        configService.publishConfig(NacosConfigUtil.getParamFlowDataId(appName), GROUP_ID, converter.convert(rules));
     }
 }

@@ -49,7 +49,7 @@ public class ZookeeperConfigUtil {
         return getPath(appName, AUTHORITY_DATA_ID_POSTFIX);
     }
 
-    public static String getParamFLowPath(String appName) {
+    public static String getParamFlowPath(String appName) {
         return getPath(appName, PARAM_FLOW_DATA_ID_POSTFIX);
     }
 

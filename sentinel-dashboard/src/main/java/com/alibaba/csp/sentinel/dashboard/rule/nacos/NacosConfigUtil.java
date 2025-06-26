@@ -63,7 +63,7 @@ public final class NacosConfigUtil {
         return appName + AUTHORITY_DATA_ID_POSTFIX;
     }
 
-    public static String getParamFLowDataId(String appName) {
+    public static String getParamFlowDataId(String appName) {
         return appName + PARAM_FLOW_DATA_ID_POSTFIX;
     }
 }
