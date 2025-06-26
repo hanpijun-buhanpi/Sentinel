@@ -37,10 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Carpenter Lee
  */
 @RestController
-@RequestMapping(value = "/resource")
-public class ResourceController {
+@RequestMapping(value = "/v1/resource")
+public class ResourceControllerV1 {
 
-    private static Logger logger = LoggerFactory.getLogger(ResourceController.class);
+    private static Logger logger = LoggerFactory.getLogger(ResourceControllerV1.class);
 
     @Autowired
     private SentinelApiClient httpFetcher;

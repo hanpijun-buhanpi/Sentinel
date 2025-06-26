@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Param flow rulecontroller (v2).
+ * Param flow rule controller (v2).
  *
  * @author Eric Zhao
  * @author Laiyancheng

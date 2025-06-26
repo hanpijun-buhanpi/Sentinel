@@ -1,6 +1,6 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.controller('GatewayIdentityCtl', ['$scope', '$stateParams', 'IdentityService',
+app.controller('GatewayIdentityCtl', ['$scope', '$stateParams', 'IdentityServiceV1',
   'ngDialog', 'GatewayFlowService', 'GatewayApiService', 'DegradeServiceV1', 'MachineService',
   '$interval', '$location', '$timeout',
   function ($scope, $stateParams, IdentityService, ngDialog,

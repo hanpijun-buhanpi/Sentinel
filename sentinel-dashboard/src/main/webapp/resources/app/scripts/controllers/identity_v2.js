@@ -1,7 +1,7 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.controller('IdentityCtl', ['$scope', '$stateParams', 'IdentityService',
-  'ngDialog', 'FlowServiceV1', 'DegradeServiceV1', 'AuthorityRuleServiceV1', 'ParamFlowServiceV1', 'MachineService',
+app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServiceV2',
+  'ngDialog', 'FlowServiceV2', 'DegradeServiceV2', 'AuthorityRuleServiceV2', 'ParamFlowServiceV2', 'MachineService',
   '$interval', '$location', '$timeout',
   function ($scope, $stateParams, IdentityService, ngDialog,
     FlowService, DegradeService, AuthorityRuleService, ParamFlowService, MachineService, $interval, $location, $timeout) {
@@ -36,6 +36,13 @@ app.controller('IdentityCtl', ['$scope', '$stateParams', 'IdentityService',
       }
     };
     $scope.table = null;
+
+    // 外部动态规则源一般存在数据更新延迟，所以这里延迟100ms进行跳转
+    function delayLocationPath(url) {
+      setTimeout(function () {
+          $location.path(url);
+      }, 100);
+    };
 
     var flowRuleDialog;
     var flowRuleDialogScope;
@@ -95,8 +102,8 @@ app.controller('IdentityCtl', ['$scope', '$stateParams', 'IdentityService',
       FlowService.newRule(flowRuleDialogScope.currentRule).success(function (data) {
         if (data.code === 0) {
           flowRuleDialog.close();
-          let url = '/dashboard/flow/' + $scope.app;
-          $location.path(url);
+          let url = '/dashboard/v2/flow/' + $scope.app;
+          delayLocationPath(url);
         } else {
           alert('失败：' + data.msg);
         }
@@ -163,8 +170,8 @@ app.controller('IdentityCtl', ['$scope', '$stateParams', 'IdentityService',
       DegradeService.newRule(degradeRuleDialogScope.currentRule).success(function (data) {
         if (data.code === 0) {
           degradeRuleDialog.close();
-          var url = '/dashboard/degrade/' + $scope.app;
-          $location.path(url);
+          var url = '/dashboard/v2/degrade/' + $scope.app;
+          delayLocationPath(url);
         } else {
           alert('失败：' + data.msg);
         }
@@ -195,8 +202,8 @@ app.controller('IdentityCtl', ['$scope', '$stateParams', 'IdentityService',
           AuthorityRuleService.addNewRule(ruleEntity).success((data) => {
               if (data.success) {
                   authorityRuleDialog.close();
-                  let url = '/dashboard/authority/' + $scope.app;
-                  $location.path(url);
+                  let url = '/dashboard/v2/authority/' + $scope.app;
+                  delayLocationPath(url);
               } else {
                   alert('添加规则失败：' + data.msg);
               }
@@ -274,8 +281,8 @@ app.controller('IdentityCtl', ['$scope', '$stateParams', 'IdentityService',
           ParamFlowService.addNewRule(ruleEntity).success((data) => {
               if (data.success) {
                   paramFlowRuleDialog.close();
-                  let url = '/dashboard/paramFlow/' + $scope.app;
-                  $location.path(url);
+                  let url = '/dashboard/v2/paramFlow/' + $scope.app;
+                  delayLocationPath(url);
               } else {
                   alert('添加热点规则失败：' + data.msg);
               }

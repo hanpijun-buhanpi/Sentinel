@@ -1,6 +1,6 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.service('IdentityService', ['$http', function ($http) {
+app.service('IdentityServiceV2', ['$http', function ($http) {
 
   this.fetchIdentityOfMachine = function (ip, port, searchKey) {
     var param = {
@@ -9,7 +9,7 @@ app.service('IdentityService', ['$http', function ($http) {
       searchKey: searchKey
     };
     return $http({
-      url: 'resource/machineResource.json',
+      url: 'v2/resource/machineResource.json',
       params: param,
       method: 'GET'
     });
@@ -22,7 +22,7 @@ app.service('IdentityService', ['$http', function ($http) {
       searchKey: searchKey
     };
     return $http({
-      url: 'resource/machineResource.json',
+      url: 'v2/resource/machineResource.json',
       params: param,
       method: 'GET'
     });

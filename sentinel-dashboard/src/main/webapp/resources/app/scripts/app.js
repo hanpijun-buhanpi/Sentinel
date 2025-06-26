@@ -350,16 +350,32 @@ angular
         }
       })
 
-      .state('dashboard.identity', {
-        templateUrl: 'app/views/identity.html',
+      .state('dashboard.identityV1', {
+        templateUrl: 'app/views/identity_v1.html',
         url: '/identity/:app',
-        controller: 'IdentityCtl',
+        controller: 'IdentityControllerV1',
         resolve: {
           loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
             return $ocLazyLoad.load({
               name: 'sentinelDashboardApp',
               files: [
-                'app/scripts/controllers/identity.js',
+                'app/scripts/controllers/identity_v1.js',
+              ]
+            });
+          }]
+        }
+      })
+
+      .state('dashboard.identityV2', {
+        templateUrl: 'app/views/identity_v2.html',
+        url: '/v2/identity/:app',
+        controller: 'IdentityControllerV2',
+        resolve: {
+          loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name: 'sentinelDashboardApp',
+              files: [
+                'app/scripts/controllers/identity_v2.js',
               ]
             });
           }]
