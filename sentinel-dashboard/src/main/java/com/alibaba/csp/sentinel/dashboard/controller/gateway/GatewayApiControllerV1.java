@@ -45,10 +45,10 @@ import static com.alibaba.csp.sentinel.adapter.gateway.common.SentinelGatewayCon
  * @since 1.7.0
  */
 @RestController
-@RequestMapping(value = "/gateway/api")
-public class GatewayApiController {
+@RequestMapping(value = "/v1/gateway/api")
+public class GatewayApiControllerV1 {
 
-    private final Logger logger = LoggerFactory.getLogger(GatewayApiController.class);
+    private final Logger logger = LoggerFactory.getLogger(GatewayApiControllerV1.class);
 
     @Autowired
     private InMemApiDefinitionStore repository;

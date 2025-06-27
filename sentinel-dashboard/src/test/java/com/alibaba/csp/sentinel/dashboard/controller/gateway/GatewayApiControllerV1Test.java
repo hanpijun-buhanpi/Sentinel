@@ -67,14 +67,14 @@ import static org.mockito.BDDMockito.mock;
 import static org.mockito.BDDMockito.verify;
 
 /**
- * Test cases for {@link GatewayApiController}.
+ * Test cases for {@link GatewayApiControllerV1}.
  *
  * @author cdfive
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(GatewayApiController.class)
+@WebMvcTest(GatewayApiControllerV1.class)
 @Import({NoAuthConfigurationTest.class, InMemApiDefinitionStore.class, AppManagement.class, SimpleMachineDiscovery.class})
-public class GatewayApiControllerTest {
+public class GatewayApiControllerV1Test {
 
     private static final String TEST_APP = "test_app";
 

@@ -414,16 +414,32 @@ angular
         }
       })
 
-      .state('dashboard.gatewayApi', {
-        templateUrl: 'app/views/gateway/api.html',
+      .state('dashboard.gatewayApiV1', {
+        templateUrl: 'app/views/gateway/api_v1.html',
         url: '/gateway/api/:app',
-        controller: 'GatewayApiCtl',
+        controller: 'GatewayApiControllerV1',
         resolve: {
           loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
             return $ocLazyLoad.load({
               name: 'sentinelDashboardApp',
               files: [
-                'app/scripts/controllers/gateway/api.js',
+                'app/scripts/controllers/gateway/api_v1.js',
+              ]
+            });
+          }]
+        }
+      })
+
+      .state('dashboard.gatewayApiV2', {
+        templateUrl: 'app/views/gateway/api_v2.html',
+        url: '/v2/gateway/api/:app',
+        controller: 'GatewayApiControllerV2',
+        resolve: {
+          loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name: 'sentinelDashboardApp',
+              files: [
+                'app/scripts/controllers/gateway/api_v2.js',
               ]
             });
           }]

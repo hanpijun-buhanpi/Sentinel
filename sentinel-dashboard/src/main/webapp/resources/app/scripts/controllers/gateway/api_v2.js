@@ -1,6 +1,6 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.controller('GatewayApiCtl', ['$scope', '$stateParams', 'GatewayApiService', 'ngDialog', 'MachineService',
+app.controller('GatewayApiControllerV2', ['$scope', '$stateParams', 'GatewayApiServiceV2', 'ngDialog', 'MachineService',
   function ($scope, $stateParams, GatewayApiService, ngDialog, MachineService) {
     $scope.app = $stateParams.app;
 
@@ -68,6 +68,13 @@ app.controller('GatewayApiCtl', ['$scope', '$stateParams', 'GatewayApiService', 
     };
     $scope.getApis = getApis;
 
+    // 外部动态规则源一般存在数据更新延迟，所以这里延迟100ms获取API列表
+    function delayGetApis() {
+      setTimeout(function () {
+        getApis();
+      }, 100);
+    };
+
     var gatewayApiDialog;
     $scope.editApi = function (api) {
       $scope.currentApi = angular.copy(api);
@@ -130,7 +137,7 @@ app.controller('GatewayApiCtl', ['$scope', '$stateParams', 'GatewayApiService', 
     function addNewApi(api) {
       GatewayApiService.newApi(api).success(function (data) {
         if (data.code == 0) {
-          getApis();
+          delayGetApis();
           gatewayApiDialog.close();
         } else {
           alert('新增自定义API失败!' + data.msg);
@@ -141,7 +148,7 @@ app.controller('GatewayApiCtl', ['$scope', '$stateParams', 'GatewayApiService', 
     function saveApi(api, edit) {
       GatewayApiService.saveApi(api).success(function (data) {
         if (data.code == 0) {
-          getApis();
+          delayGetApis();
           if (edit) {
             gatewayApiDialog.close();
           } else {
@@ -181,7 +188,7 @@ app.controller('GatewayApiCtl', ['$scope', '$stateParams', 'GatewayApiService', 
     function deleteApi(api) {
       GatewayApiService.deleteApi(api).success(function (data) {
         if (data.code == 0) {
-          getApis();
+          delayGetApis();
           confirmDialog.close();
         } else {
           alert('删除自定义API失败!' + data.msg);
