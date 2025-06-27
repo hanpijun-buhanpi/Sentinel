@@ -18,9 +18,12 @@
  */
 package com.alibaba.csp.sentinel.dashboard.controller.v2;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.alibaba.csp.sentinel.dashboard.discovery.AppInfo;
+import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
+import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.alibaba.csp.sentinel.command.vo.NodeVo;
 
@@ -51,6 +54,8 @@ public class ResourceControllerV2 {
 
     @Autowired
     private SentinelApiClient httpFetcher;
+    @Autowired
+    private AppManagement appManagement;
 
     /**
      * Fetch real time statistics info of the machine.
@@ -99,6 +104,48 @@ public class ResourceControllerV2 {
     }
 
     /**
+     * Fetch real time statistics info of the app.
+     *
+     * @param app       app to fetch
+     * @param type      one of [root, default, cluster], 'root' means fetching from tree root node, 'default' means
+     *                  fetching from tree default node, 'cluster' means fetching from cluster node.
+     * @param searchKey key to search
+     * @return node statistics info.
+     */
+    @GetMapping("/appResource.json")
+    public Result<List<ResourceVo>> fetchResourceChainListOfApp(String app, String type, String searchKey) {
+        if (StringUtil.isEmpty(app)) {
+            return Result.ofFail(-1, "invalid param, give app");
+        }
+        final String ROOT = "root";
+        final String DEFAULT = "default";
+        if (StringUtil.isEmpty(type)) {
+            type = ROOT;
+        }
+        if (ROOT.equalsIgnoreCase(type) || DEFAULT.equalsIgnoreCase(type)) {
+            List<NodeVo> nodeVos = fetchNodeOfApp(app, type, false);
+            if (nodeVos == null) {
+                return Result.ofSuccess(null);
+            }
+            ResourceTreeNode treeNode = ResourceTreeNode.fromNodeVoList(nodeVos);
+            treeNode.searchIgnoreCase(searchKey);
+            return Result.ofSuccess(ResourceVo.fromResourceTreeNode(treeNode));
+        } else {
+            // Normal (cluster node).
+            List<NodeVo> nodeVos = fetchNodeOfApp(app, type, true);
+            if (nodeVos == null) {
+                return Result.ofSuccess(null);
+            }
+            if (StringUtil.isNotEmpty(searchKey)) {
+                nodeVos = nodeVos.stream().filter(node -> node.getResource()
+                    .toLowerCase().contains(searchKey.toLowerCase()))
+                    .collect(Collectors.toList());
+            }
+            return Result.ofSuccess(ResourceVo.fromNodeVoList(nodeVos));
+        }
+    }
+
+    /**
      * 处理数据
      *
      * @param nodeVos NodeVos
@@ -120,5 +167,53 @@ public class ResourceControllerV2 {
                 n.setOneMinuteTotal(-1L); // 控制面板上没显示
             }
         });
+    }
+
+    /**
+     * 根据APP获取节点列表
+     *
+     * @param app       App name
+     * @param type      返回类型
+     * @param isCluster 是否为集群节点
+     * @return 节点列表
+     */
+    private List<NodeVo> fetchNodeOfApp(String app, String type, boolean isCluster) {
+        AppInfo appInfo = appManagement.getDetailApp(app);
+        if (appInfo == null) {
+            return null;
+        }
+        Set<MachineInfo> machines = appInfo.getMachines();
+        Map<String, NodeVo> map = new LinkedHashMap<>(machines.size());
+        machines.stream()
+                .filter(MachineInfo::isHealthy)
+                .map(e -> {
+                    if (!isCluster) {
+                        return httpFetcher.fetchResourceOfMachine(e.getIp(), e.getPort(), type);
+                    } else {
+                        return httpFetcher.fetchClusterNodeOfMachine(e.getIp(), e.getPort(), true);
+                    }
+                })
+                .filter(Objects::nonNull)
+                .forEach(e -> {
+                    for (NodeVo v : e) {
+                        if (map.containsKey(v.getResource())) {
+                            NodeVo node = map.get(v.getResource());
+                            node.setThreadNum(node.getThreadNum() + v.getThreadNum()); // 并发数
+                            node.setPassQps(node.getPassQps() + v.getPassQps()); // 通过QPS
+                            node.setBlockQps(node.getBlockQps() + v.getBlockQps()); // 拒绝QPS
+                            node.setTotalQps(node.getTotalQps() + v.getTotalQps()); // 控制面板上没显示
+                            node.setAverageRt(node.getAverageRt() + v.getAverageRt()); // 平均RT
+                            node.setSuccessQps(node.getSuccessQps() + v.getSuccessQps()); // 控制面板上没显示
+                            node.setExceptionQps(node.getExceptionQps() + v.getExceptionQps()); // 控制面板上没显示
+                            node.setOneMinuteException(node.getOneMinuteException() + v.getOneMinuteException()); // 控制面板上没显示
+                            node.setOneMinutePass(node.getOneMinutePass() + v.getOneMinutePass()); // 分钟通过
+                            node.setOneMinuteBlock(node.getOneMinuteBlock() + v.getOneMinuteBlock()); // 分钟拒绝
+                            node.setOneMinuteTotal(node.getOneMinuteTotal() + v.getOneMinuteTotal()); // 控制面板上没显示
+                        } else {
+                            map.put(v.getResource(), v);
+                        }
+                    }
+                });
+        return new ArrayList<>(map.values());
     }
 }

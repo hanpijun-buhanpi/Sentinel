@@ -23,7 +23,15 @@
       <div class="card">
         <div class="inputs-header">
           <span class="brand" style="font-size: 13px;">簇点链路</span>
-          <button class="btn btn-primary" style="float: right; margin-right: 10px; height: 30px;font-size: 12px;" ng-click="queryIdentities()">刷新</button>
+          <button class="btn btn-primary" style="float: right; margin-right: 10px; height: 30px;font-size: 12px;" ng-click="reInitIdentityDatas()">刷新</button>
+          <div class="btn-group" style="float:right; margin-right: 30px;" ng-show="ofMachine">
+            <button class="btn btn-main" style="height: 30px;font-size: 12px;">单机数据</button>
+            <button class="btn btn-default-inverse" style="height: 30px;font-size: 12px;" ng-click="appView()">集群数据</button>
+          </div>
+          <div class="btn-group" style="float:right; margin-right: 30px;" ng-show="!ofMachine">
+            <button class="btn btn-default-inverse" style="height: 30px;font-size: 12px;" ng-click="machineView()">单机数据</button>
+            <button class="btn btn-main" style="height: 30px;font-size: 12px;">集群数据</button>
+          </div>
           <!-- <button class="btn btn-danger" style="float: right;margin-right: 10px;height: 30px;font-size: 12px;" ng-click="expandAll()"
             ng-if="!isExpand && isTreeView">展开</button>
           <button class="btn btn-danger" style="float: right;margin-right: 10px;height: 30px;font-size: 12px;" ng-click="collapseAll()"

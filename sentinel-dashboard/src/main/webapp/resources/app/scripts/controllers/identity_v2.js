@@ -20,6 +20,7 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
     $scope.searchKey = '';
     $scope.firstExpandAll = false;
     $scope.isTreeView = true;
+    $scope.ofMachine = true;
 
     $scope.macsInputConfig = {
       searchField: ['text', 'value'],
@@ -395,11 +396,19 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
     };
     $scope.treeView = function () {
       $scope.isTreeView = true;
-      queryIdentities();
+      reInitIdentityDatas();
     };
     $scope.listView = function () {
       $scope.isTreeView = false;
+      reInitIdentityDatas();
+    };
+    $scope.machineView = function () {
+      $scope.ofMachine = true;
       queryIdentities();
+    };
+    $scope.appView = function () {
+      $scope.ofMachine = false;
+      queryIdentitiesOfApp();
     };
 
     function queryAppMachines() {
@@ -444,12 +453,18 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
     var intervalId;
     function reInitIdentityDatas() {
       // $interval.cancel(intervalId);
-      queryIdentities();
+      if ($scope.ofMachine) {
+        queryIdentities();
+      } else {
+        queryIdentitiesOfApp();
+      }
       // intervalId = $interval(function () {
       //    queryIdentities();
       // }, DATA_REFRESH_INTERVAL * 1000);
     };
+    $scope.reInitIdentityDatas = reInitIdentityDatas;
 
+    // 旧版本方法，查找单台机器的
     function queryIdentities() {
       var mac = $scope.macInputModel.split(':');
       if (mac == null || mac.length < 2) {
@@ -482,4 +497,34 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
       }
     };
     $scope.queryIdentities = queryIdentities;
+
+    // 新方法，查找所有机器，因性能较低，所以只推荐手动调用
+    function queryIdentitiesOfApp() {
+      if ($scope.isTreeView) {
+        IdentityService.fetchIdentityOfApp($scope.app, $scope.searchKey).success(
+          function (data) {
+            if (data.code == 0 && data.data) {
+              $scope.identities = data.data;
+              $scope.totalCount = $scope.identities.length;
+            } else {
+              $scope.identities = [];
+              $scope.totalCount = 0;
+            }
+          }
+        );
+      } else {
+        IdentityService.fetchClusterNodeOfApp($scope.app, $scope.searchKey).success(
+          function (data) {
+            if (data.code == 0 && data.data) {
+              $scope.identities = data.data;
+              $scope.totalCount = $scope.identities.length;
+            } else {
+              $scope.identities = [];
+              $scope.totalCount = 0;
+            }
+          }
+        );
+      }
+    };
+    $scope.queryIdentitiesOfApp = queryIdentitiesOfApp;
   }]);
