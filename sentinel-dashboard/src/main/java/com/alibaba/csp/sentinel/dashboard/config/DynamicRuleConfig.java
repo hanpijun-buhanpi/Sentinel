@@ -3,6 +3,7 @@
  */
 package com.alibaba.csp.sentinel.dashboard.config;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
 import com.alibaba.csp.sentinel.dashboard.rule.*;
 import com.alibaba.csp.sentinel.dashboard.rule.apollo.*;
@@ -62,6 +63,10 @@ public class DynamicRuleConfig {
     public static final String PARAM_FLOW_RULE_ENTITY_DECODER = "paramFlowRuleEntityDecoder";
     public static final String PARAM_FLOW_DYNAMIC_RULE_PROVIDER = "paramFlowDynamicRuleProvider";
     public static final String PARAM_FLOW_DYNAMIC_RULE_PUBLISHER = "paramFlowDynamicRulePublisher";
+    public static final String GATEWAY_FLOW_RULE_ENTITY_ENCODER = "gatewayFlowRuleEntityEncoder";
+    public static final String GATEWAY_FLOW_RULE_ENTITY_DECODER = "gatewayFlowRuleEntityDecoder";
+    public static final String GATEWAY_FLOW_DYNAMIC_RULE_PROVIDER = "gatewayFlowDynamicRuleProvider";
+    public static final String GATEWAY_FLOW_DYNAMIC_RULE_PUBLISHER = "gatewayFlowDynamicRulePublisher";
 
     @Bean(FLOW_RULE_ENTITY_ENCODER)
     public Converter<List<FlowRuleEntity>, String> flowRuleEntityEncoder() {
@@ -111,6 +116,16 @@ public class DynamicRuleConfig {
     @Bean(PARAM_FLOW_RULE_ENTITY_DECODER)
     public Converter<String, List<ParamFlowRuleEntity>> paramFlowRuleEntityDecoder() {
         return s -> JSON.parseArray(s, ParamFlowRuleEntity.class);
+    }
+
+    @Bean(GATEWAY_FLOW_RULE_ENTITY_ENCODER)
+    public Converter<List<GatewayFlowRuleEntity>, String> gatewayFlowRuleEntityEncoder() {
+        return JSON::toJSONString;
+    }
+
+    @Bean(GATEWAY_FLOW_RULE_ENTITY_DECODER)
+    public Converter<String, List<GatewayFlowRuleEntity>> gatewayFlowRuleEntityDecoder() {
+        return s -> JSON.parseArray(s, GatewayFlowRuleEntity.class);
     }
 
     /**
@@ -180,6 +195,16 @@ public class DynamicRuleConfig {
         @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<ParamFlowRuleEntity>> paramFlowDynamicRulePublisher() {
             return new ParamFlowRuleNacosPublisher();
+        }
+
+        @Bean(name = GATEWAY_FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<GatewayFlowRuleEntity>> gatewayFlowDynamicRuleProvider() {
+            return new GatewayFlowRuleNacosProvider();
+        }
+
+        @Bean(name = GATEWAY_FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<GatewayFlowRuleEntity>> gatewayFlowDynamicRulePublisher() {
+            return new GatewayFlowRuleNacosPublisher();
         }
     }
 
@@ -255,6 +280,16 @@ public class DynamicRuleConfig {
         @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<ParamFlowRuleEntity>> paramFlowDynamicRulePublisher() {
             return new ParamFlowRuleApolloPublisher();
+        }
+
+        @Bean(name = GATEWAY_FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<GatewayFlowRuleEntity>> gatewayFlowDynamicRuleProvider() {
+            return new GatewayFlowRuleApolloProvider();
+        }
+
+        @Bean(name = GATEWAY_FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<GatewayFlowRuleEntity>> gatewayFlowDynamicRulePublisher() {
+            return new GatewayFlowRuleApolloPublisher();
         }
     }
 
@@ -337,6 +372,16 @@ public class DynamicRuleConfig {
         public DynamicRulePublisher<List<ParamFlowRuleEntity>> paramFlowDynamicRulePublisher() {
             return new ParamFlowRuleZookeeperPublisher();
         }
+
+        @Bean(name = GATEWAY_FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<GatewayFlowRuleEntity>> gatewayFlowDynamicRuleProvider() {
+            return new GatewayFlowRuleZookeeperProvider();
+        }
+
+        @Bean(name = GATEWAY_FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<GatewayFlowRuleEntity>> gatewayFlowDynamicRulePublisher() {
+            return new GatewayFlowRuleZookeeperPublisher();
+        }
     }
 
     /**
@@ -397,6 +442,16 @@ public class DynamicRuleConfig {
         @Bean(name = PARAM_FLOW_DYNAMIC_RULE_PUBLISHER)
         public DynamicRulePublisher<List<ParamFlowRuleEntity>> paramFlowDynamicRulePublisher() {
             return new ParamFlowRuleApiPublisher();
+        }
+
+        @Bean(name = GATEWAY_FLOW_DYNAMIC_RULE_PROVIDER)
+        public DynamicRuleProvider<List<GatewayFlowRuleEntity>> gatewayFlowDynamicRuleProvider() {
+            return new GatewayFlowRuleApiProvider();
+        }
+
+        @Bean(name = GATEWAY_FLOW_DYNAMIC_RULE_PUBLISHER)
+        public DynamicRulePublisher<List<GatewayFlowRuleEntity>> gatewayFlowDynamicRulePublisher() {
+            return new GatewayFlowRuleApiPublisher();
         }
     }
 }

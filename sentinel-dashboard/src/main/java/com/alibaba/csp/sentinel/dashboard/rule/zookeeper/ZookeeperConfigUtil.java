@@ -32,6 +32,7 @@ public class ZookeeperConfigUtil {
     public static final String SYSTEM_DATA_ID_POSTFIX = "-system-rules";
     public static final String AUTHORITY_DATA_ID_POSTFIX = "-authority-rules";
     public static final String PARAM_FLOW_DATA_ID_POSTFIX = "-param-rules";
+    public static final String GATEWAY_FLOW_DATA_ID_POSTFIX = "-gateway-flow-rules";
 
     public static String getFlowPath(String appName) {
         return getPath(appName, FLOW_DATA_ID_POSTFIX);
@@ -51,6 +52,10 @@ public class ZookeeperConfigUtil {
 
     public static String getParamFlowPath(String appName) {
         return getPath(appName, PARAM_FLOW_DATA_ID_POSTFIX);
+    }
+
+    public static String getGatewayFlowPath(String appName) {
+        return getPath(appName, GATEWAY_FLOW_DATA_ID_POSTFIX);
     }
 
     private static String getPath(String appName, String postfix) {
