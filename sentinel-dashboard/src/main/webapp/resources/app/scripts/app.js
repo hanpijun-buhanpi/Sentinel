@@ -382,16 +382,32 @@ angular
         }
       })
 
-      .state('dashboard.gatewayIdentity', {
-        templateUrl: 'app/views/gateway/identity.html',
+      .state('dashboard.gatewayIdentityV1', {
+        templateUrl: 'app/views/gateway/identity_v1.html',
         url: '/gateway/identity/:app',
-        controller: 'GatewayIdentityCtl',
+        controller: 'GatewayIdentityControllerV1',
         resolve: {
           loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
             return $ocLazyLoad.load({
               name: 'sentinelDashboardApp',
               files: [
-                'app/scripts/controllers/gateway/identity.js',
+                'app/scripts/controllers/gateway/identity_v1.js',
+              ]
+            });
+          }]
+        }
+      })
+
+      .state('dashboard.gatewayIdentityV2', {
+        templateUrl: 'app/views/gateway/identity_v2.html',
+        url: '/v2/gateway/identity/:app',
+        controller: 'GatewayIdentityControllerV2',
+        resolve: {
+          loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name: 'sentinelDashboardApp',
+              files: [
+                'app/scripts/controllers/gateway/identity_v2.js',
               ]
             });
           }]

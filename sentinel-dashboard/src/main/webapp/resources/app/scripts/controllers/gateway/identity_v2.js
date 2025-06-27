@@ -1,7 +1,7 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.controller('GatewayIdentityCtl', ['$scope', '$stateParams', 'IdentityServiceV1',
-  'ngDialog', 'GatewayFlowServiceV1', 'GatewayApiServiceV1', 'DegradeServiceV1', 'MachineService',
+app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'IdentityServiceV2',
+  'ngDialog', 'GatewayFlowServiceV2', 'GatewayApiServiceV2', 'DegradeServiceV2', 'MachineService',
   '$interval', '$location', '$timeout',
   function ($scope, $stateParams, IdentityService, ngDialog,
     GatewayFlowService, GatewayApiService, DegradeService, MachineService, $interval, $location, $timeout) {
@@ -31,6 +31,13 @@ app.controller('GatewayIdentityCtl', ['$scope', '$stateParams', 'IdentityService
       }
     };
     $scope.table = null;
+
+    // 外部动态规则源一般存在数据更新延迟，所以这里延迟100ms进行跳转
+    function delayLocationPath(url) {
+      setTimeout(function () {
+        $location.path(url);
+      }, 100);
+    };
 
     getApiNames();
     function getApiNames() {
@@ -137,8 +144,8 @@ app.controller('GatewayIdentityCtl', ['$scope', '$stateParams', 'IdentityService
       GatewayFlowService.newRule(gatewayFlowRuleDialogScope.currentRule).success(function (data) {
         if (data.code === 0) {
           gatewayFlowRuleDialog.close();
-          let url = '/dashboard/gateway/flow/' + $scope.app;
-          $location.path(url);
+          let url = '/dashboard/v2/gateway/flow/' + $scope.app;
+          delayLocationPath(url);
         } else {
           alert('失败!');
         }
@@ -202,8 +209,8 @@ app.controller('GatewayIdentityCtl', ['$scope', '$stateParams', 'IdentityService
       DegradeService.newRule(degradeRuleDialogScope.currentRule).success(function (data) {
         if (data.code == 0) {
           degradeRuleDialog.close();
-          var url = '/dashboard/degrade/' + $scope.app;
-          $location.path(url);
+          var url = '/dashboard/v2/degrade/' + $scope.app;
+          delayLocationPath(url);
         } else {
           alert('失败!');
         }
