@@ -430,16 +430,32 @@ angular
         }
       })
 
-      .state('dashboard.gatewayFlow', {
-          templateUrl: 'app/views/gateway/flow.html',
+      .state('dashboard.gatewayFlowV1', {
+          templateUrl: 'app/views/gateway/flow_v1.html',
           url: '/gateway/flow/:app',
-          controller: 'GatewayFlowCtl',
+          controller: 'GatewayFlowControllerV1',
           resolve: {
               loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
                   return $ocLazyLoad.load({
                       name: 'sentinelDashboardApp',
                       files: [
-                          'app/scripts/controllers/gateway/flow.js',
+                          'app/scripts/controllers/gateway/flow_v1.js',
+                      ]
+                  });
+              }]
+          }
+      })
+
+      .state('dashboard.gatewayFlowV2', {
+          templateUrl: 'app/views/gateway/flow_v2.html',
+          url: '/v2/gateway/flow/:app',
+          controller: 'GatewayFlowControllerV2',
+          resolve: {
+              loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
+                  return $ocLazyLoad.load({
+                      name: 'sentinelDashboardApp',
+                      files: [
+                          'app/scripts/controllers/gateway/flow_v2.js',
                       ]
                   });
               }]

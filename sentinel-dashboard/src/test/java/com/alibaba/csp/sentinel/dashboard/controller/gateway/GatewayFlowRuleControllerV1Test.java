@@ -69,14 +69,14 @@ import static org.mockito.BDDMockito.mock;
 import static org.mockito.BDDMockito.verify;
 
 /**
- * Test cases for {@link GatewayFlowRuleController}.
+ * Test cases for {@link GatewayFlowRuleControllerV1}.
  *
  * @author cdfive
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(GatewayFlowRuleController.class)
+@WebMvcTest(GatewayFlowRuleControllerV1.class)
 @Import({NoAuthConfigurationTest.class, InMemGatewayFlowRuleStore.class, AppManagement.class, SimpleMachineDiscovery.class})
-public class GatewayFlowRuleControllerTest {
+public class GatewayFlowRuleControllerV1Test {
 
     private static final String TEST_APP = "test_app";
 
