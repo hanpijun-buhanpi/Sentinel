@@ -31,9 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -59,7 +57,7 @@ public class SystemControllerV2 {
     @Qualifier(DynamicRuleConfig.SYSTEM_DYNAMIC_RULE_PUBLISHER)
     private DynamicRulePublisher<List<SystemRuleEntity>> rulePublisher;
 
-    @GetMapping("/rules.json")
+    @GetMapping("/rules")
     @AuthAction(PrivilegeType.READ_RULE)
     public Result<List<SystemRuleEntity>> apiQueryMachineRules(String app) {
         if (StringUtil.isEmpty(app)) {
@@ -75,63 +73,12 @@ public class SystemControllerV2 {
         }
     }
 
-    private int countNotNullAndNotNegative(Number... values) {
-        int notNullCount = 0;
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != null && values[i].doubleValue() >= 0) {
-                notNullCount++;
-            }
-        }
-        return notNullCount;
-    }
-
-    @RequestMapping("/new.json")
+    @PostMapping("/rule")
     @AuthAction(PrivilegeType.WRITE_RULE)
-    public Result<SystemRuleEntity> apiAdd(String app, String ip, Integer port,
-                                           Double highestSystemLoad, Double highestCpuUsage, Long avgRt,
-                                           Long maxThread, Double qps) {
-        if (StringUtil.isEmpty(app)) {
-            return Result.ofFail(-1, "app can't be null or empty");
-        }
-        int notNullCount = countNotNullAndNotNegative(highestSystemLoad, avgRt, maxThread, qps, highestCpuUsage);
-        if (notNullCount != 1) {
-            return Result.ofFail(-1, "only one of [highestSystemLoad, avgRt, maxThread, qps,highestCpuUsage] "
-                + "value must be set > 0, but " + notNullCount + " values get");
-        }
-        if (null != highestCpuUsage && highestCpuUsage > 1) {
-            return Result.ofFail(-1, "highestCpuUsage must between [0.0, 1.0]");
-        }
-        SystemRuleEntity entity = new SystemRuleEntity();
-        entity.setApp(app.trim());
-        entity.setIp(ip.trim());
-        entity.setPort(port);
-        // -1 is a fake value
-        if (null != highestSystemLoad) {
-            entity.setHighestSystemLoad(highestSystemLoad);
-        } else {
-            entity.setHighestSystemLoad(-1D);
-        }
-
-        if (null != highestCpuUsage) {
-            entity.setHighestCpuUsage(highestCpuUsage);
-        } else {
-            entity.setHighestCpuUsage(-1D);
-        }
-
-        if (avgRt != null) {
-            entity.setAvgRt(avgRt);
-        } else {
-            entity.setAvgRt(-1L);
-        }
-        if (maxThread != null) {
-            entity.setMaxThread(maxThread);
-        } else {
-            entity.setMaxThread(-1L);
-        }
-        if (qps != null) {
-            entity.setQps(qps);
-        } else {
-            entity.setQps(-1D);
+    public Result<SystemRuleEntity> apiAddRule(@RequestBody SystemRuleEntity entity) {
+        Result<SystemRuleEntity> checkResult = checkEntityInternal(entity);
+        if (checkResult != null) {
+            return checkResult;
         }
         Date date = new Date();
         entity.setGmtCreate(date);
@@ -146,62 +93,35 @@ public class SystemControllerV2 {
         return Result.ofSuccess(entity);
     }
 
-    @GetMapping("/save.json")
+    @PutMapping("/rule/{id}")
     @AuthAction(PrivilegeType.WRITE_RULE)
-    public Result<SystemRuleEntity> apiUpdateIfNotNull(Long id, String app, Double highestSystemLoad,
-            Double highestCpuUsage, Long avgRt, Long maxThread, Double qps) {
-        if (id == null) {
-            return Result.ofFail(-1, "id can't be null");
+//    public Result<SystemRuleEntity> apiUpdateIfNotNull(Long id, String app, Double highestSystemLoad,
+//            Double highestCpuUsage, Long avgRt, Long maxThread, Double qps) {
+    public Result<SystemRuleEntity> apiUpdateIfNotNull(@PathVariable("id") Long id,
+                                                       @RequestBody SystemRuleEntity entity) {
+        if (id == null || id <= 0) {
+            return Result.ofFail(-1, "id can't be null or negative");
         }
-        SystemRuleEntity entity = repository.findById(id);
-        if (entity == null) {
-            return Result.ofFail(-1, "id " + id + " dose not exist");
+        SystemRuleEntity oldEntity = repository.findById(id);
+        if (oldEntity == null) {
+            return Result.ofFail(-1, "Degrade rule does not exist, id=" + id);
+        }
+        entity.setApp(oldEntity.getApp());
+        entity.setId(oldEntity.getId());
+        Result<SystemRuleEntity> checkResult = checkEntityInternal(entity);
+        if (checkResult != null) {
+            return checkResult;
         }
 
-        if (StringUtil.isNotBlank(app)) {
-            entity.setApp(app.trim());
-        }
-        if (highestSystemLoad != null) {
-            if (highestSystemLoad < 0) {
-                return Result.ofFail(-1, "highestSystemLoad must >= 0");
-            }
-            entity.setHighestSystemLoad(highestSystemLoad);
-        }
-        if (highestCpuUsage != null) {
-            if (highestCpuUsage < 0) {
-                return Result.ofFail(-1, "highestCpuUsage must >= 0");
-            }
-            if (highestCpuUsage > 1) {
-                return Result.ofFail(-1, "highestCpuUsage must <= 1");
-            }
-            entity.setHighestCpuUsage(highestCpuUsage);
-        }
-        if (avgRt != null) {
-            if (avgRt < 0) {
-                return Result.ofFail(-1, "avgRt must >= 0");
-            }
-            entity.setAvgRt(avgRt);
-        }
-        if (maxThread != null) {
-            if (maxThread < 0) {
-                return Result.ofFail(-1, "maxThread must >= 0");
-            }
-            entity.setMaxThread(maxThread);
-        }
-        if (qps != null) {
-            if (qps < 0) {
-                return Result.ofFail(-1, "qps must >= 0");
-            }
-            entity.setQps(qps);
-        }
         Date date = new Date();
+        entity.setGmtCreate(oldEntity.getGmtCreate());
         entity.setGmtModified(date);
         try {
             entity = repository.save(entity);
             if (entity == null) {
                 return Result.ofFail(-1, "save entity fail");
             }
-            publishRules(app);
+            publishRules(oldEntity.getApp());
         } catch (Throwable throwable) {
             logger.error("save error:", throwable);
             return Result.ofThrowable(-1, throwable);
@@ -209,9 +129,9 @@ public class SystemControllerV2 {
         return Result.ofSuccess(entity);
     }
 
-    @RequestMapping("/delete.json")
+    @DeleteMapping("/rule/{id}")
     @AuthAction(PrivilegeType.DELETE_RULE)
-    public Result<?> delete(Long id) {
+    public Result<?> delete(@PathVariable("id") Long id) {
         if (id == null) {
             return Result.ofFail(-1, "id can't be null");
         }
@@ -223,10 +143,56 @@ public class SystemControllerV2 {
             repository.delete(id);
             publishRules(oldEntity.getApp());
         } catch (Throwable throwable) {
-            logger.error("delete error:", throwable);
+            logger.error("Failed to delete degrade rule, id={}", id, throwable);
             return Result.ofThrowable(-1, throwable);
         }
         return Result.ofSuccess(id);
+    }
+
+    private <R> Result<R> checkEntityInternal(SystemRuleEntity entity) {
+        if (entity == null) {
+            return Result.ofFail(-1, "invalid body");
+        }
+        if (StringUtil.isBlank(entity.getApp())) {
+            return Result.ofFail(-1, "app can't be blank");
+        }
+        int notNullCount = countNotNullAndNotNegative(entity.getHighestSystemLoad(), entity.getAvgRt(),
+                entity.getMaxThread(), entity.getQps(), entity.getHighestCpuUsage());
+        if (notNullCount != 1) {
+            return Result.ofFail(-1, "only one of [highestSystemLoad, avgRt, maxThread, qps,highestCpuUsage] "
+                    + "value must be set > 0, but " + notNullCount + " values get");
+        }
+        if (null != entity.getHighestCpuUsage() && entity.getHighestCpuUsage() > 1) {
+            return Result.ofFail(-1, "highestCpuUsage must between [0.0, 1.0]");
+        }
+
+        // -1 is a fake value
+        if (null == entity.getHighestSystemLoad()) {
+            entity.setHighestSystemLoad(-1D);
+        }
+        if (null == entity.getHighestCpuUsage()) {
+            entity.setHighestCpuUsage(-1D);
+        }
+        if (null == entity.getAvgRt()) {
+            entity.setAvgRt(-1L);
+        }
+        if (null == entity.getMaxThread()) {
+            entity.setMaxThread(-1L);
+        }
+        if (null == entity.getQps()) {
+            entity.setQps(-1D);
+        }
+        return null;
+    }
+
+    private int countNotNullAndNotNegative(Number... values) {
+        int notNullCount = 0;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null && values[i].doubleValue() >= 0) {
+                notNullCount++;
+            }
+        }
+        return notNullCount;
     }
 
     private void publishRules(String app) throws Exception {
