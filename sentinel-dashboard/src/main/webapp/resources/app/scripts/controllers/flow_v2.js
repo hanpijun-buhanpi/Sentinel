@@ -1,9 +1,7 @@
 var app = angular.module('sentinelDashboardApp');
 
 app.controller('FlowControllerV2', ['$scope', '$stateParams', 'FlowServiceV2', 'ngDialog',
-  'MachineService',
-  function ($scope, $stateParams, FlowService, ngDialog,
-    MachineService) {
+  function ($scope, $stateParams, FlowService, ngDialog) {
     $scope.app = $stateParams.app;
 
     $scope.rulesPageConfig = {
@@ -11,20 +9,6 @@ app.controller('FlowControllerV2', ['$scope', '$stateParams', 'FlowServiceV2', '
       currentPageIndex: 1,
       totalPage: 1,
       totalCount: 0,
-    };
-    $scope.macsInputConfig = {
-      searchField: ['text', 'value'],
-      persist: true,
-      create: false,
-      maxItems: 1,
-      render: {
-        item: function (data, escape) {
-          return '<div>' + escape(data.text) + '</div>';
-        }
-      },
-      onChange: function (value, oldValue) {
-        $scope.macInputModel = value;
-      }
     };
 
     $scope.generateThresholdTypeShow = (rule) => {
@@ -42,11 +26,7 @@ app.controller('FlowControllerV2', ['$scope', '$stateParams', 'FlowServiceV2', '
 
     getMachineRules();
     function getMachineRules() {
-      if (!$scope.macInputModel) {
-        return;
-      }
-      var mac = $scope.macInputModel.split(':');
-      FlowService.queryMachineRules($scope.app, mac[0], mac[1]).success(
+      FlowService.queryMachineRules($scope.app).success(
         function (data) {
           if (data.code == 0 && data.data) {
             $scope.rules = data.data;
@@ -84,14 +64,11 @@ app.controller('FlowControllerV2', ['$scope', '$stateParams', 'FlowServiceV2', '
     };
 
     $scope.addNewRule = function () {
-      var mac = $scope.macInputModel.split(':');
       $scope.currentRule = {
         grade: 1,
         strategy: 0,
         controlBehavior: 0,
         app: $scope.app,
-        ip: mac[0],
-        port: mac[1],
         limitApp: 'default',
         clusterMode: false,
         clusterConfig: {
@@ -193,36 +170,4 @@ app.controller('FlowControllerV2', ['$scope', '$stateParams', 'FlowServiceV2', '
         }
       });
     }
-    queryAppMachines();
-    function queryAppMachines() {
-      MachineService.getAppMachines($scope.app).success(
-        function (data) {
-          if (data.code == 0) {
-            // $scope.machines = data.data;
-            if (data.data) {
-              $scope.machines = [];
-              $scope.macsInputOptions = [];
-              data.data.forEach(function (item) {
-                if (item.healthy) {
-                  $scope.macsInputOptions.push({
-                    text: item.ip + ':' + item.port,
-                    value: item.ip + ':' + item.port
-                  });
-                }
-              });
-            }
-            if ($scope.macsInputOptions.length > 0) {
-              $scope.macInputModel = $scope.macsInputOptions[0].value;
-            }
-          } else {
-            $scope.macsInputOptions = [];
-          }
-        }
-      );
-    };
-    $scope.$watch('macInputModel', function () {
-      if ($scope.macInputModel) {
-        getMachineRules();
-      }
-    });
   }]);
