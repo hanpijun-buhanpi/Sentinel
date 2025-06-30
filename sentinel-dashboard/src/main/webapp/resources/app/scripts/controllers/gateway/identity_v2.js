@@ -1,10 +1,10 @@
 var app = angular.module('sentinelDashboardApp');
 
 app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'IdentityServiceV2',
-  'ngDialog', 'GatewayFlowServiceV2', 'GatewayApiServiceV2', 'DegradeServiceV2', 'MachineService',
+  'ngDialog', 'GatewayFlowServiceV2', 'GatewayApiServiceV2', 'DegradeServiceV2',
   '$interval', '$location', '$timeout',
   function ($scope, $stateParams, IdentityService, ngDialog,
-    GatewayFlowService, GatewayApiService, DegradeService, MachineService, $interval, $location, $timeout) {
+    GatewayFlowService, GatewayApiService, DegradeService, $interval, $location, $timeout) {
 
     $scope.app = $stateParams.app;
 
@@ -16,21 +16,6 @@ app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'Identi
 
     $scope.searchKey = '';
     $scope.ofMachine = true;
-
-    $scope.macsInputConfig = {
-      searchField: ['text', 'value'],
-      persist: true,
-      create: false,
-      maxItems: 1,
-      render: {
-        item: function (data, escape) {
-          return '<div>' + escape(data.text) + '</div>';
-        }
-      },
-      onChange: function (value, oldValue) {
-        $scope.macInputModel = value;
-      }
-    };
     $scope.table = null;
 
     // 外部动态规则源一般存在数据更新延迟，所以这里延迟100ms进行跳转
@@ -40,14 +25,8 @@ app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'Identi
       }, 100);
     };
 
-    getApiNames();
     function getApiNames() {
-      if (!$scope.macInputModel) {
-        return;
-      }
-
-      var mac = $scope.macInputModel.split(':');
-      GatewayApiService.queryApis($scope.app, mac[0], mac[1]).success(
+      GatewayApiService.queryApis($scope.app).success(
         function (data) {
           if (data.code == 0 && data.data) {
             $scope.apiNames = [];
@@ -62,10 +41,6 @@ app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'Identi
     var gatewayFlowRuleDialog;
     var gatewayFlowRuleDialogScope;
     $scope.addNewGatewayFlowRule = function (resource) {
-      if (!$scope.macInputModel) {
-        return;
-      }
-      var mac = $scope.macInputModel.split(':');
       gatewayFlowRuleDialogScope = $scope.$new(true);
 
       gatewayFlowRuleDialogScope.apiNames = $scope.apiNames;
@@ -75,8 +50,6 @@ app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'Identi
       gatewayFlowRuleDialogScope.currentRule = {
         grade: 1,
         app: $scope.app,
-        ip: mac[0],
-        port: mac[1],
         resourceMode: gatewayFlowRuleDialogScope.apiNames.indexOf(resource) == -1 ? 0 : 1,
         resource: resource,
         interval: 1,
@@ -170,10 +143,6 @@ app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'Identi
 
     var degradeRuleDialog;
     $scope.addNewDegradeRule = function (resource) {
-      if (!$scope.macInputModel) {
-        return;
-      }
-      var mac = $scope.macInputModel.split(':');
       degradeRuleDialogScope = $scope.$new(true);
       degradeRuleDialogScope.currentRule = {
         enable: false,
@@ -181,9 +150,9 @@ app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'Identi
         strategy: 0,
         resource: resource,
         limitApp: 'default',
-        app: $scope.app,
-        ip: mac[0],
-        port: mac[1]
+        minRequestAmount: 5,
+        statIntervalMs: 1000,
+        app: $scope.app
       };
 
       degradeRuleDialogScope.degradeRuleDialog = {
@@ -249,49 +218,14 @@ app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'Identi
       queryIdentitiesOfApp();
     };
 
-    function queryAppMachines() {
-      MachineService.getAppMachines($scope.app).success(
-        function (data) {
-          if (data.code === 0) {
-            if (data.data) {
-              $scope.machines = [];
-              $scope.macsInputOptions = [];
-              data.data.forEach(function (item) {
-                if (item.healthy) {
-                  $scope.macsInputOptions.push({
-                    text: item.ip + ':' + item.port,
-                    value: item.ip + ':' + item.port
-                  });
-                }
-              });
-            }
-            if ($scope.macsInputOptions.length > 0) {
-              $scope.macInputModel = $scope.macsInputOptions[0].value;
-            }
-          } else {
-            $scope.macsInputOptions = [];
-          }
-        }
-      );
-    }
-
-    // Fetch all machines by current app name.
-    queryAppMachines();
-
-    $scope.$watch('macInputModel', function () {
-      if ($scope.macInputModel) {
-        reInitIdentityDatas();
-      }
-    });
-
     $scope.$on('$destroy', function () {
       $interval.cancel(intervalId);
     });
 
+    reInitIdentityDatas();
     var intervalId;
     function reInitIdentityDatas() {
       getApiNames();
-      queryIdentities();
       if ($scope.ofMachine) {
         queryIdentities();
       } else {
