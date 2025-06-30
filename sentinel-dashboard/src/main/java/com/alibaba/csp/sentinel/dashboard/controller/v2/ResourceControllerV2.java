@@ -60,19 +60,24 @@ public class ResourceControllerV2 {
     /**
      * Fetch real time statistics info of the machine.
      *
-     * @param ip        ip to fetch
-     * @param port      port of the ip
+     * @param app       app to fetch
      * @param type      one of [root, default, cluster], 'root' means fetching from tree root node, 'default' means
      *                  fetching from tree default node, 'cluster' means fetching from cluster node.
      * @param searchKey key to search
      * @return node statistics info.
      */
     @GetMapping("/machineResource.json")
-    public Result<List<ResourceVo>> fetchResourceChainListOfMachine(String ip, Integer port, String type,
-                                                                    String searchKey) {
-        if (StringUtil.isEmpty(ip) || port == null) {
-            return Result.ofFail(-1, "invalid param, give ip, port");
+    public Result<List<ResourceVo>> fetchResourceChainListOfMachine(String app, String type, String searchKey) {
+        AppInfo appInfo = appManagement.getDetailApp(app);
+        Set<MachineInfo> machines = appInfo.getMachines();
+        machines = machines.stream().filter(MachineInfo::isHealthy).collect(Collectors.toSet());
+        if (machines.isEmpty()) {
+            return Result.ofSuccess(null);
         }
+
+        MachineInfo machineInfo = machines.iterator().next();
+        String ip = machineInfo.getIp();
+        Integer port = machineInfo.getPort();
         final String ROOT = "root";
         final String DEFAULT = "default";
         if (StringUtil.isEmpty(type)) {
@@ -214,6 +219,9 @@ public class ResourceControllerV2 {
                         }
                     }
                 });
+        if (map.isEmpty()) {
+            return null;
+        }
         return new ArrayList<>(map.values());
     }
 }

@@ -300,34 +300,9 @@ app.controller('GatewayIdentityControllerV2', ['$scope', '$stateParams', 'Identi
     };
     $scope.reInitIdentityDatas = reInitIdentityDatas;
 
-    function queryIdentities() {
-      var mac = $scope.macInputModel.split(':');
-      if (mac == null || mac.length < 2) {
-        return;
-      }
-
-      IdentityService.fetchClusterNodeOfMachine(mac[0], mac[1], $scope.searchKey).success(
-        function (data) {
-          if (data.code == 0 && data.data) {
-            $scope.identities = data.data;
-            $scope.totalCount = $scope.identities.length;
-          } else {
-            $scope.identities = [];
-            $scope.totalCount = 0;
-          }
-        }
-      );
-    };
-    $scope.queryIdentities = queryIdentities;
-
     // 旧版本方法，查找单台机器的
     function queryIdentities() {
-      var mac = $scope.macInputModel.split(':');
-      if (mac == null || mac.length < 2) {
-        return;
-      }
-
-      IdentityService.fetchClusterNodeOfMachine(mac[0], mac[1], $scope.searchKey).success(
+      IdentityService.fetchClusterNodeOfMachine($scope.app, $scope.searchKey).success(
         function (data) {
           if (data.code == 0 && data.data) {
             $scope.identities = data.data;

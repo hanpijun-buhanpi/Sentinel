@@ -1,10 +1,10 @@
 var app = angular.module('sentinelDashboardApp');
 
 app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServiceV2',
-  'ngDialog', 'FlowServiceV2', 'DegradeServiceV2', 'AuthorityRuleServiceV2', 'ParamFlowServiceV2', 'MachineService',
+  'ngDialog', 'FlowServiceV2', 'DegradeServiceV2', 'AuthorityRuleServiceV2', 'ParamFlowServiceV2',
   '$interval', '$location', '$timeout',
   function ($scope, $stateParams, IdentityService, ngDialog,
-    FlowService, DegradeService, AuthorityRuleService, ParamFlowService, MachineService, $interval, $location, $timeout) {
+    FlowService, DegradeService, AuthorityRuleService, ParamFlowService, $interval, $location, $timeout) {
 
     $scope.app = $stateParams.app;
 
@@ -48,10 +48,6 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
     var flowRuleDialog;
     var flowRuleDialogScope;
     $scope.addNewFlowRule = function (resource) {
-      if (!$scope.macInputModel) {
-        return;
-      }
-      var mac = $scope.macInputModel.split(':');
       flowRuleDialogScope = $scope.$new(true);
       flowRuleDialogScope.currentRule = {
         enable: false,
@@ -64,9 +60,7 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
         clusterConfig: {
             thresholdType: 0
         },
-        app: $scope.app,
-        ip: mac[0],
-        port: mac[1]
+        app: $scope.app
       };
 
       flowRuleDialogScope.flowRuleDialog = {
@@ -129,10 +123,6 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
     var degradeRuleDialog;
     var degradeRuleDialogScope;
     $scope.addNewDegradeRule = function (resource) {
-      if (!$scope.macInputModel) {
-        return;
-      }
-      var mac = $scope.macInputModel.split(':');
       degradeRuleDialogScope = $scope.$new(true);
       degradeRuleDialogScope.currentRule = {
         enable: false,
@@ -142,9 +132,7 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
         limitApp: 'default',
         minRequestAmount: 5,
         statIntervalMs: 1000,
-        app: $scope.app,
-        ip: mac[0],
-        port: mac[1]
+        app: $scope.app
       };
 
       degradeRuleDialogScope.degradeRuleDialog = {
@@ -238,15 +226,9 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
       }
 
       $scope.addNewAuthorityRule = function (resource) {
-          if (!$scope.macInputModel) {
-              return;
-          }
-          let mac = $scope.macInputModel.split(':');
           authorityRuleDialogScope = $scope.$new(true);
           authorityRuleDialogScope.currentRule = {
               app: $scope.app,
-              ip: mac[0],
-              port: mac[1],
               rule: {
                   resource: resource,
                   strategy: 0,
@@ -317,15 +299,9 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
       }
 
       $scope.addNewParamFlowRule = function (resource) {
-          if (!$scope.macInputModel) {
-              return;
-          }
-          let mac = $scope.macInputModel.split(':');
           paramFlowRuleDialogScope = $scope.$new(true);
           paramFlowRuleDialogScope.currentRule = {
               app: $scope.app,
-              ip: mac[0],
-              port: mac[1],
               rule: {
                   resource: resource,
                   grade: 1,
@@ -411,45 +387,11 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
       queryIdentitiesOfApp();
     };
 
-    function queryAppMachines() {
-      MachineService.getAppMachines($scope.app).success(
-        function (data) {
-          if (data.code === 0) {
-            if (data.data) {
-              $scope.machines = [];
-              $scope.macsInputOptions = [];
-              data.data.forEach(function (item) {
-                if (item.healthy) {
-                  $scope.macsInputOptions.push({
-                    text: item.ip + ':' + item.port,
-                    value: item.ip + ':' + item.port
-                  });
-                }
-              });
-            }
-            if ($scope.macsInputOptions.length > 0) {
-              $scope.macInputModel = $scope.macsInputOptions[0].value;
-            }
-          } else {
-            $scope.macsInputOptions = [];
-          }
-        }
-      );
-    }
-
-    // Fetch all machines by current app name.
-    queryAppMachines();
-
-    $scope.$watch('macInputModel', function () {
-      if ($scope.macInputModel) {
-        reInitIdentityDatas();
-      }
-    });
-
     $scope.$on('$destroy', function () {
       $interval.cancel(intervalId);
     });
 
+    reInitIdentityDatas();
     var intervalId;
     function reInitIdentityDatas() {
       // $interval.cancel(intervalId);
@@ -466,12 +408,8 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
 
     // 旧版本方法，查找单台机器的
     function queryIdentities() {
-      var mac = $scope.macInputModel.split(':');
-      if (mac == null || mac.length < 2) {
-        return;
-      }
       if ($scope.isTreeView) {
-        IdentityService.fetchIdentityOfMachine(mac[0], mac[1], $scope.searchKey).success(
+        IdentityService.fetchIdentityOfMachine($scope.app, $scope.searchKey).success(
           function (data) {
             if (data.code == 0 && data.data) {
               $scope.identities = data.data;
@@ -483,7 +421,7 @@ app.controller('IdentityControllerV2', ['$scope', '$stateParams', 'IdentityServi
           }
         );
       } else {
-        IdentityService.fetchClusterNodeOfMachine(mac[0], mac[1], $scope.searchKey).success(
+        IdentityService.fetchClusterNodeOfMachine($scope.app, $scope.searchKey).success(
           function (data) {
             if (data.code == 0 && data.data) {
               $scope.identities = data.data;
