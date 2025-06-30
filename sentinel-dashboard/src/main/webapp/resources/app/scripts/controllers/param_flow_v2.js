@@ -4,9 +4,7 @@
  * @author Eric Zhao
  */
 angular.module('sentinelDashboardApp').controller('ParamFlowControllerV2', ['$scope', '$stateParams', 'ParamFlowServiceV2', 'ngDialog',
-  'MachineService',
-  function ($scope, $stateParams, ParamFlowService, ngDialog,
-    MachineService) {
+  function ($scope, $stateParams, ParamFlowService, ngDialog) {
     const UNSUPPORTED_CODE = 4041;
     $scope.app = $stateParams.app;
     $scope.curExItem = {};
@@ -20,20 +18,6 @@ angular.module('sentinelDashboardApp').controller('ParamFlowControllerV2', ['$sc
       currentPageIndex: 1,
       totalPage: 1,
       totalCount: 0,
-    };
-    $scope.macsInputConfig = {
-      searchField: ['text', 'value'],
-      persist: true,
-      create: false,
-      maxItems: 1,
-      render: {
-        item: function (data, escape) {
-          return '<div>' + escape(data.text) + '</div>';
-        }
-      },
-      onChange: function (value, oldValue) {
-        $scope.macInputModel = value;
-      }
     };
 
       function updateSingleParamItem(arr, v, t, c) {
@@ -98,12 +82,9 @@ angular.module('sentinelDashboardApp').controller('ParamFlowControllerV2', ['$sc
           removeSingleParamItem($scope.currentRule.rule.paramFlowItemList, v, t);
       };
 
+    getMachineRules();
     function getMachineRules() {
-      if (!$scope.macInputModel) {
-        return;
-      }
-      let mac = $scope.macInputModel.split(':');
-      ParamFlowService.queryMachineRules($scope.app, mac[0], mac[1])
+      ParamFlowService.queryMachineRules($scope.app)
         .success(function (data) {
           if (data.code === 0 && data.data) {
             $scope.loadError = undefined;
@@ -113,7 +94,7 @@ angular.module('sentinelDashboardApp').controller('ParamFlowControllerV2', ['$sc
             $scope.rules = [];
             $scope.rulesPageConfig.totalCount = 0;
             if (data.code === UNSUPPORTED_CODE) {
-              $scope.loadError = {message: "机器 " + mac[0] + ":" + mac[1] + " 的 Sentinel 客户端版本不支持热点参数限流功能，请升级至 0.2.0 以上版本并引入 sentinel-parameter-flow-control 依赖。"}
+              $scope.loadError = {message: "某个机器的 Sentinel 客户端版本不支持热点参数限流功能，请查看日志，将对应机器升级至 0.2.0 以上版本并引入 sentinel-parameter-flow-control 依赖。"}
             } else {
               $scope.loadError = {message: data.msg}
             }
@@ -156,11 +137,8 @@ angular.module('sentinelDashboardApp').controller('ParamFlowControllerV2', ['$sc
     };
 
     $scope.addNewRule = function () {
-      var mac = $scope.macInputModel.split(':');
       $scope.currentRule = {
         app: $scope.app,
-        ip: mac[0],
-        port: mac[1],
         rule: {
           grade: 1,
           paramFlowItemList: [],
@@ -297,38 +275,4 @@ angular.module('sentinelDashboardApp').controller('ParamFlowControllerV2', ['$sc
         console.error('error');
       }
     };
-
-    queryAppMachines();
-
-    function queryAppMachines() {
-      MachineService.getAppMachines($scope.app).success(
-        function (data) {
-          if (data.code == 0) {
-            // $scope.machines = data.data;
-            if (data.data) {
-              $scope.machines = [];
-              $scope.macsInputOptions = [];
-              data.data.forEach(function (item) {
-                if (item.healthy) {
-                  $scope.macsInputOptions.push({
-                    text: item.ip + ':' + item.port,
-                    value: item.ip + ':' + item.port
-                  });
-                }
-              });
-            }
-            if ($scope.macsInputOptions.length > 0) {
-              $scope.macInputModel = $scope.macsInputOptions[0].value;
-            }
-          } else {
-            $scope.macsInputOptions = [];
-          }
-        }
-      );
-    };
-    $scope.$watch('macInputModel', function () {
-      if ($scope.macInputModel) {
-        getMachineRules();
-      }
-    });
   }]);
