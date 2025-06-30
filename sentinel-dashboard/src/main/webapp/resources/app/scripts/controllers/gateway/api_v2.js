@@ -1,7 +1,7 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.controller('GatewayApiControllerV2', ['$scope', '$stateParams', 'GatewayApiServiceV2', 'ngDialog', 'MachineService',
-  function ($scope, $stateParams, GatewayApiService, ngDialog, MachineService) {
+app.controller('GatewayApiControllerV2', ['$scope', '$stateParams', 'GatewayApiServiceV2', 'ngDialog',
+  function ($scope, $stateParams, GatewayApiService, ngDialog) {
     $scope.app = $stateParams.app;
 
     $scope.apisPageConfig = {
@@ -11,29 +11,9 @@ app.controller('GatewayApiControllerV2', ['$scope', '$stateParams', 'GatewayApiS
       totalCount: 0,
     };
 
-    $scope.macsInputConfig = {
-      searchField: ['text', 'value'],
-      persist: true,
-      create: false,
-      maxItems: 1,
-      render: {
-        item: function (data, escape) {
-          return '<div>' + escape(data.text) + '</div>';
-        }
-      },
-      onChange: function (value, oldValue) {
-        $scope.macInputModel = value;
-      }
-    };
-
     getApis();
     function getApis() {
-      if (!$scope.macInputModel) {
-        return;
-      }
-
-      var mac = $scope.macInputModel.split(':');
-      GatewayApiService.queryApis($scope.app, mac[0], mac[1]).success(
+      GatewayApiService.queryApis($scope.app).success(
         function (data) {
           if (data.code == 0 && data.data) {
             // To merge rows for api who has more than one predicateItems, here we build data manually
@@ -92,12 +72,9 @@ app.controller('GatewayApiControllerV2', ['$scope', '$stateParams', 'GatewayApiS
     };
 
     $scope.addNewApi = function () {
-      var mac = $scope.macInputModel.split(':');
       $scope.currentApi = {
         grade: 0,
         app: $scope.app,
-        ip: mac[0],
-        port: mac[1],
         predicateItems: [{matchStrategy: 0, pattern: ''}]
       };
       $scope.gatewayApiDialog = {
@@ -215,38 +192,5 @@ app.controller('GatewayApiControllerV2', ['$scope', '$stateParams', 'GatewayApiS
       }
       $scope.currentApi.predicateItems.splice($index, 1);
     };
-
-    queryAppMachines();
-    function queryAppMachines() {
-      MachineService.getAppMachines($scope.app).success(
-        function (data) {
-          if (data.code == 0) {
-            // $scope.machines = data.data;
-            if (data.data) {
-              $scope.machines = [];
-              $scope.macsInputOptions = [];
-              data.data.forEach(function (item) {
-                if (item.healthy) {
-                  $scope.macsInputOptions.push({
-                    text: item.ip + ':' + item.port,
-                    value: item.ip + ':' + item.port
-                  });
-                }
-              });
-            }
-            if ($scope.macsInputOptions.length > 0) {
-              $scope.macInputModel = $scope.macsInputOptions[0].value;
-            }
-          } else {
-            $scope.macsInputOptions = [];
-          }
-        }
-      );
-    };
-    $scope.$watch('macInputModel', function () {
-      if ($scope.macInputModel) {
-        getApis();
-      }
-    });
   }]
 );

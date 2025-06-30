@@ -1,11 +1,9 @@
 var app = angular.module('sentinelDashboardApp');
 
 app.service('GatewayApiServiceV2', ['$http', function ($http) {
-  this.queryApis = function (app, ip, port) {
+  this.queryApis = function (app) {
     var param = {
-      app: app,
-      ip: ip,
-      port: port
+      app: app
     };
     return $http({
       url: '/v2/gateway/api/list.json',
