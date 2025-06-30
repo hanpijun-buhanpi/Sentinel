@@ -1,11 +1,9 @@
 var app = angular.module('sentinelDashboardApp');
 
 app.service('GatewayFlowServiceV2', ['$http', function ($http) {
-  this.queryRules = function (app, ip, port) {
+  this.queryRules = function (app) {
     var param = {
-      app: app,
-      ip: ip,
-      port: port
+      app: app
     };
 
     return $http({
