@@ -44,7 +44,7 @@ public final class ReactorSphU {
             try {
                 AsyncEntry entry = SphU.asyncEntry(resourceName, entryType);
                 entryWrapper.set(entry);
-                return actual.subscriberContext(context -> {
+                return actual.contextWrite(context -> {
                     if (entry == null) {
                         return context;
                     }
@@ -54,11 +54,12 @@ public final class ReactorSphU {
                     }
                     // TODO: check GC friendly?
                     return context.put(SentinelReactorConstants.SENTINEL_CONTEXT_KEY, sentinelContext);
-                }).doOnSuccessOrError((o, t) -> {
+                }).doOnError(t -> {
+                    if (t != null) {
+                        Tracer.traceContext(t, 1, entry.getAsyncContext());
+                    }
+                }).doOnTerminate(() -> {
                     if (entry != null && entryWrapper.compareAndSet(entry, null)) {
-                        if (t != null) {
-                            Tracer.traceContext(t, 1, entry.getAsyncContext());
-                        }
                         entry.exit();
                     }
                 });

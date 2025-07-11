@@ -12,7 +12,7 @@
     <artifactId>sentinel-demo-spring-webflux</artifactId>
 
     <properties>
-        <spring.boot.version>2.5.12</spring.boot.version>
+        <spring.boot.version>3.5.3</spring.boot.version>
     </properties>
 
     <dependencies>

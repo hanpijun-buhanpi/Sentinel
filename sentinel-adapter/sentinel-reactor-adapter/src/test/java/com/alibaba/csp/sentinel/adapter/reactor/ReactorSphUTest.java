@@ -28,7 +28,7 @@ public class ReactorSphUTest {
             new FlowRule(resourceName).setCount(0)
         ));
         StepVerifier.create(ReactorSphU.entryWith(resourceName, Mono.just(60))
-            .subscribeOn(Schedulers.elastic())
+            .subscribeOn(Schedulers.boundedElastic())
             .map(e -> e * 3))
             .expectError(BlockException.class)
             .verify();
@@ -45,7 +45,7 @@ public class ReactorSphUTest {
     public void testReactorEntryWithCommon() {
         String resourceName = createResourceName("testReactorEntryWithCommon");
         StepVerifier.create(ReactorSphU.entryWith(resourceName, Mono.just(60))
-            .subscribeOn(Schedulers.elastic())
+            .subscribeOn(Schedulers.boundedElastic())
             .map(e -> e * 3))
             .expectNext(180)
             .verifyComplete();
